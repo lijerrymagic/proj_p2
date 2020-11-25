@@ -22,6 +22,14 @@ def login():
     return 'Bad login'
 
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'GET':
+        return render_template("register.html")
+    # TODO post save to db
+    return 'Bad register'
+
+
 @app.route('/index')
 @login_required
 def index():
