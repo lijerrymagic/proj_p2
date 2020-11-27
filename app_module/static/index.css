@@ -12,7 +12,7 @@ body {
 .login, .register {
   	width: 400px;
   	background-color: #ffffff;
-  	box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.3);
+  	box-shadow: 9px 9px 9px 9px rgba(0, 0, 0, 0.3);
   	margin: 100px auto;
 }
 .login h1, .register h1 {
@@ -144,4 +144,58 @@ body.loggedin {
 .content > div p {
 	padding: 5px;
 	margin: 0 0 10px 0;
+}
+
+.navbar {
+    background-color:#29313d;
+    overflow:hidden;
+    height:50px;
+}
+
+.navbar h1{
+    color:white;
+    font-size:large;
+    margin-left:10px;
+}
+
+.main {
+  	width: 1000px;
+  	height: 100%;
+  	background-color: #ffffff;
+  	box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.3);
+  	margin: 100px auto;
+}
+
+.main h1 {
+  	text-align: center;
+  	color: #5b6574;
+  	font-size: 24px;
+  	padding: 20px 0 20px 0;
+  	border-bottom: 1px solid #dee0e4;
+}
+
+.vehicle_card {
+  display: flex;
+  border: 1px solid black;
+  border-radius: 2px;
+  box-shadow: 3px 3px 3px 3px rgba(0, 0, 0, 0.3);
+  justify-content:space-around;
+}
+
+.vehicle_image {
+  padding: 10px;
+  flex-grow: 1
+}
+
+.vehicle_info {
+  padding: 10px;
+  flex-grow: 3
+}
+
+.vehicle_buttons {
+  padding: 10px;
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

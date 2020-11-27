@@ -11,6 +11,13 @@ class User(UserMixin):
     def __repr__(self):
         return "%d/%s/%s" % (self.id, self.name, self.password)
 
+
+class Vehicle:
+    def __init__(self, name, model):
+        self.name = name
+        self.model = model
+
+
 @login_manager.user_loader
 def user_loader(cust_id):
     return User(cust_id)

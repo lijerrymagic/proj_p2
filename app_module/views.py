@@ -3,7 +3,13 @@ from werkzeug.utils import redirect
 from app_module import app
 from flask import request, render_template, url_for
 from app_module import db
-from app_module.models import User
+from app_module.models import User, Vehicle
+
+vehicle_images = {
+    "bmw": "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/2021-bmw-x5-mmp-1-1600284201.jpg?crop=1xw:0"
+           ".84375xh;center,top&resize=480:* ",
+    "audi": "https://media.ed.edmunds-media.com/audi/s5/2015/oem/2015_audi_s5_convertible_prestige-quattro_fq_oem_1_815.jpg"
+}
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -33,9 +39,18 @@ def register():
 @app.route('/index')
 @login_required
 def index():
-    return render_template("index.html")
+    vehicles_rs = get_vehicles()
+    vehicles = []
+    for t in vehicles_rs:
+        vehicles.append(Vehicle(t[0], t[1]))
+    return render_template("index.html", vehicles=vehicles, vehicle_images=vehicle_images)
 
 
 def get_password(username):
     rs = db.run_query('''select password from myusers2 where username = %s''', (username,))
     return rs[0][0] if rs is not None else rs
+
+
+def get_vehicles():
+    rs = db.run_query('''select * from vehicle''')
+    return rs
