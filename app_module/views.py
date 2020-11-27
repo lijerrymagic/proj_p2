@@ -13,6 +13,7 @@ vehicle_images = {
 
 
 @app.route('/login', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
         return render_template("login.html")
@@ -46,6 +47,14 @@ def index():
     return render_template("index.html", vehicles=vehicles, vehicle_images=vehicle_images)
 
 
+@app.route('/vehicles/<string:vehicle_id>')
+def vehicle_page(vehicle_id):
+    vehicle_rs = get_vehicle_by_id(vehicle_id)
+    if vehicle_rs is not None:
+        vehicle = Vehicle(vehicle_rs[0][0], vehicle_rs[0][1])
+    return render_template("vehicle_page.html", vehicle=vehicle, vehicle_images=vehicle_images)
+
+
 def get_password(username):
     rs = db.run_query('''select password from myusers2 where username = %s''', (username,))
     return rs[0][0] if rs is not None else rs
@@ -54,3 +63,8 @@ def get_password(username):
 def get_vehicles():
     rs = db.run_query('''select * from vehicle''')
     return rs
+
+
+def get_vehicle_by_id(vehicle_id):
+    rs = db.run_query('''select * from vehicle where name=%s''', (vehicle_id,))
+    return rs if rs is not None else rs

@@ -12,23 +12,18 @@
         </div>
 
         <div class="main">
-            <h1>Vehicles Available</h1>
-            <ul style="padding-inline-start:0px;">
-            {% for vehicle in vehicles %}
-              <div class="vehicle_card">
+            <h1>Vehicle Renting</h1>
+			<div class="vehicle_card">
                   <div class="vehicle_image">
                         <img src="{{vehicle_images[vehicle.name]}}" width="400" height="250">
                   </div>
                   <div class="vehicle_info">
-                      <h1> {{ vehicle.name }} </h1>
-                      <h1> {{ vehicle.model }} </h1>
                   </div>
                   <div class="vehicle_buttons">
                       <a class="button" href="{{ url_for('vehicle_page', vehicle_id=vehicle.name) }}"><button>RENT</button></a>
+					  <a class="button" href="{{ url_for('vehicle_page', vehicle_id=vehicle.name) }}"><button>CANCEL</button></a>
                   </div>
               </div>
-            {% endfor %}
-            </ul>
 		</div>
 	</body>
 </html>
