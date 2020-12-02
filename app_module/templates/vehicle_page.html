@@ -9,6 +9,7 @@
 	<body>
         <div class="navbar">
             <a href="/index" style="text-decoration:none"><h1>WOW Rental</h1></a>
+			<a href="/logout" style="text-decoration:none; padding-right: 10px"><h1>Log out</h1></a>
         </div>
 
         <div class="main">
@@ -17,11 +18,46 @@
                   <div class="vehicle_image">
                         <img src="{{vehicle_images[vehicle.name]}}" width="400" height="250">
                   </div>
-                  <div class="vehicle_info">
+                  <div class="vehicle_rent">
+					  <form action="" id="rent_form" method="post">
+						  <label for="pickup_date">Pick up Date:</label>
+						  <input type="date" id="pickup_date" name="pickup_date" required><br><br>
+
+						  <label for="dropoff_date">Pick up Date:</label>
+						  <input type="date" id="dropoff_date" name="dropoff_date" required><br><br>
+
+						  <label for="pickup_location">Pick up location:</label>
+						  <select name="pickup_location" id="pickup_location">
+							<option value="volvo">Volvo</option>
+							<option value="saab">Saab</option>
+							<option value="opel">Opel</option>
+							<option value="audi">Audi</option>
+						  </select><br><br>
+
+						  <label for="dropoff_location">Drop off location:</label>
+						  <select name="dropoff_location" id="dropoff_location">
+							<option value="volvo">Volvo</option>
+							<option value="saab">Saab</option>
+							<option value="opel">Opel</option>
+							<option value="audi">Audi</option>
+						  </select><br><br>
+
+						  <label for="start_odometer">Start odometer:</label>
+						  <input type="number" id="start_odometer" name="start_odometer" required><br><br>
+
+						  <label for="end_odometer">End odometer:</label>
+						  <input type="number" id="end_odometer" name="end_odometer" required><br><br>
+
+						  <label for="daily_limit">Daily limit:</label>
+						  <input type="number" id="daily_limit" name="daily_limit" required><br><br>
+
+						  <label for="add_coupon">Add coupon:</label>
+						  <input type="checkbox" id="add_coupon" name="add_coupon"><br><br>
+					  </form>
                   </div>
                   <div class="vehicle_buttons">
-                      <a class="button" href="{{ url_for('vehicle_page', vehicle_id=vehicle.name) }}"><button>RENT</button></a>
-					  <a class="button" href="{{ url_for('vehicle_page', vehicle_id=vehicle.name) }}"><button>CANCEL</button></a>
+					  <button type="submit" form="rent_form" class="rent_button">Confirm</button>
+					  <a class="button" href="{{ url_for('index') }}"><button>Cancel</button></a>
                   </div>
               </div>
 		</div>

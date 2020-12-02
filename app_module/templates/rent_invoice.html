@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>WOW Index</title>
+		<link rel="stylesheet" href="../../static/index.css">
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+	</head>
+	<body>
+        <div class="navbar">
+            <a href="/index" style="text-decoration:none"><h1>WOW Rental</h1></a>
+			<a href="/logout" style="text-decoration:none; padding-right: 10px"><h1>Log out</h1></a>
+        </div>
+
+        <div class="main">
+            <h1>Invoice</h1>
+			<div class="vehicle_card">
+                  <div class="vehicle_image">
+                        <img src="{{vehicle_images[vehicle.name]}}" width="400" height="250">
+                  </div>
+                  <div class="vehicle_payment">
+				  	<h1>You are all set!</h1>
+				    <h3>Here's your invoice brief:</h3>
+				  </div>
+
+                  <div class="vehicle_buttons">
+					  <a class="button" href="{{ url_for('index', vehicle_id=vehicle.name) }}"><button>Back to Home</button></a>
+                  </div>
+              </div>
+		</div>
+	</body>
+</html>

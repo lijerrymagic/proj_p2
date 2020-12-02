@@ -147,6 +147,8 @@ body.loggedin {
 }
 
 .navbar {
+    display: flex;
+    justify-content:space-between;
     background-color:#29313d;
     overflow:hidden;
     height:50px;
@@ -201,6 +203,17 @@ body.loggedin {
 }
 
 a.button {
+    -webkit-appearance: button;
+    -moz-appearance: button;
+    appearance: button;
+
+    text-decoration: none;
+    color: initial;
+    border-radius: 2px;
+    box-shadow: 3px 3px 3px 3px rgba(0, 0, 0, 0.3);
+}
+
+.rent_button{
     -webkit-appearance: button;
     -moz-appearance: button;
     appearance: button;
