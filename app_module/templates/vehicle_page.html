@@ -16,7 +16,7 @@
             <h1>Vehicle Renting</h1>
 			<div class="vehicle_card">
                   <div class="vehicle_image">
-                        <img src="{{vehicle_images[vehicle.name]}}" width="400" height="250">
+                        <img src="{{vehicle_images[vehicle.make + '_' +vehicle.model]}}" width="400" height="260">
                   </div>
                   <div class="vehicle_rent">
 					  <form action="" id="rent_form" method="post">
@@ -28,18 +28,16 @@
 
 						  <label for="pickup_location">Pick up location:</label>
 						  <select name="pickup_location" id="pickup_location">
-							<option value="volvo">Volvo</option>
-							<option value="saab">Saab</option>
-							<option value="opel">Opel</option>
-							<option value="audi">Audi</option>
+							{% for location in locations %}
+								<option value= "{{location.location_id}}">{{ location.street }}, {{ location.city }}, {{ location.state }}</option>
+						    {% endfor %}
 						  </select><br><br>
 
 						  <label for="dropoff_location">Drop off location:</label>
 						  <select name="dropoff_location" id="dropoff_location">
-							<option value="volvo">Volvo</option>
-							<option value="saab">Saab</option>
-							<option value="opel">Opel</option>
-							<option value="audi">Audi</option>
+							{% for location in locations2 %}
+								<option value= "{{location.location_id}}">{{ location.street }}, {{ location.city }}, {{ location.state }}</option>
+						    {% endfor %}
 						  </select><br><br>
 
 						  <label for="start_odometer">Start odometer:</label>

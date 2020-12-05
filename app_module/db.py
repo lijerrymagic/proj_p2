@@ -1,5 +1,5 @@
 import pymysql
-from app_module.models import User, Vehicle, Address, Customer
+from app_module.models import User, Vehicle, Address, Customer, Location
 
 HOSTNAME = 'localhost'
 USERNAME = 'root'
@@ -56,10 +56,23 @@ def get_user_type(username):
 
 
 def get_vehicles():
+    """
+    Get full location
+    :return:
+    """
     rs = run_query('''select * from zlrz_vehicle''')
-    return rs
+    return [] if rs is None else rs
+
+
+def get_all_locations():
+    """
+    Get all location objects
+    :return:
+    """
+    rs = run_query('''select * from zlrz_office_location''')
+    return [] if rs is None else list(map(lambda t: Location(t[1], t[2], t[3], t[4], t[5], t[0]), rs))
 
 
 def get_vehicle_by_id(vehicle_id):
-    rs = run_query('''select * from zlrz_vehicle where vehicle_id=%s''', (vehicle_id,))
-    return rs if rs is not None else rs
+    rs = run_query('''select * from zlrz_vehicle where veh_id=%s''', (vehicle_id,))
+    return list(map(lambda t: Vehicle(t[1], t[2], t[3], t[4], t[5], t[6], t[7], t[0]), rs))[0] if rs is not None else None

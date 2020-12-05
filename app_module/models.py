@@ -14,9 +14,15 @@ class User(UserMixin):
 
 
 class Vehicle:
-    def __init__(self, name, model):
-        self.name = name
+    def __init__(self, make, model, year, vin_num, license_num, class_num, location_id, veh_id=None):
+        self.make = make
         self.model = model
+        self.year = year
+        self.vin_num = vin_num
+        self.license_num = license_num
+        self.class_num = class_num
+        self.location_id = location_id
+        self.veh_id = veh_id
 
 
 class Customer:
@@ -40,6 +46,16 @@ class Address:
         self.street = street
         self.zipcode = zipcode
         self.addr_id = addr_id
+
+
+class Location:
+    def __init__(self, phone, state, city, street, zipcode, location_id=None):
+        self.phone = phone
+        self.state = state
+        self.city = city
+        self.street = street
+        self.zipcode = zipcode
+        self.location_id = location_id
 
 
 @login_manager.user_loader
