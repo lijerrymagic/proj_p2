@@ -1,5 +1,5 @@
 import pymysql
-from app_module.models import User, Vehicle, Address, Customer, Location
+from app_module.models import User, Vehicle, Address, Customer, Location, Coupon, VehicleClass
 
 HOSTNAME = 'localhost'
 USERNAME = 'root'
@@ -55,6 +55,18 @@ def get_user_type(username):
     return rs[0][0] if rs is not None else rs
 
 
+def get_user_id(username):
+    rs = run_query('''select cust_id from zlrz_customer where username = %s''', (username,))
+    return rs[0][0] if rs is not None else rs
+
+
+def get_coupon(cust_id):
+    rs = run_query('''select zlrz_coupons.* from zlrz_cust_coupon join zlrz_coupons 
+    on zlrz_cust_coupon.cou_id = zlrz_coupons.cou_id where zlrz_cust_coupon.cust_id = %s'''
+                   , (cust_id,))
+    return list(map(lambda t: Coupon(t[1], t[2], t[3], t[0]), rs))[0] if rs is not None else rs
+
+
 def get_vehicles():
     """
     Get full location
@@ -74,5 +86,12 @@ def get_all_locations():
 
 
 def get_vehicle_by_id(vehicle_id):
-    rs = run_query('''select * from zlrz_vehicle where veh_id=%s''', (vehicle_id,))
-    return list(map(lambda t: Vehicle(t[1], t[2], t[3], t[4], t[5], t[6], t[7], t[0]), rs))[0] if rs is not None else None
+    rs = run_query('''select * from zlrz_vehicle where veh_id=%s''', (int(vehicle_id),))
+    return list(map(lambda t: Vehicle(t[1], t[2], t[3], t[4], t[5], t[6], t[7], t[0]), rs))[0] \
+        if rs is not None else None
+
+
+def get_vehicle_class(vehicle_id):
+    rs = run_query('''select zlrz_vehicle_class.* from zlrz_vehicle join zlrz_vehicle_class 
+    on zlrz_vehicle.vc_num = zlrz_vehicle_class.vc_num where zlrz_vehicle.veh_id=%s''', (int(vehicle_id),))
+    return list(map(lambda t: VehicleClass(t[1], t[2], t[3], t[0]), rs))[0] if rs is not None else None

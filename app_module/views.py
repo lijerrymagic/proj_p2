@@ -2,11 +2,12 @@ from cryptography.fernet import Fernet
 from flask_login import login_user, login_required, current_user, logout_user
 from werkzeug.utils import redirect
 from app_module import app
-from flask import request, render_template, url_for
+from flask import request, render_template, url_for, session
 from app_module import db
 from app_module.db import insert_address, insert_customer, get_vehicle_by_id, get_vehicles, get_password, get_user_type, \
-    get_all_locations
-from app_module.models import User, Vehicle, Address, Customer
+    get_all_locations, get_user_id, get_coupon, get_vehicle_class
+from app_module.models import User, Vehicle, Address, Customer, Rental
+from datetime import date
 
 vehicle_images = {
     "BMW_M4": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/2015_BMW_M4_%28F82%29_coupe_%2824220553394%29"
@@ -100,16 +101,45 @@ def vehicle_page(vehicle_id):
     else:
         pickup_date = request.form.get('pickup_date')
         dropoff_date = request.form.get('dropoff_date')
-        return redirect(url_for("rent_payment", vehicle_id=vehicle_id), code=303)
+        pickup_location = request.form.get('pickup_location')
+        dropoff_location = request.form.get('dropoff_location')
+        start_odometer = request.form.get('start_odometer')
+        end_odometer = request.form.get('end_odometer')
+        daily_limit = request.form.get('daily_limit')
+        add_coupon = request.form.get('add_coupon')
+
+        return redirect(url_for("rent_payment", vehicle_id=vehicle_id, pickup_date=pickup_date
+                                , dropoff_date=dropoff_date, pickup_location=pickup_location
+                                , dropoff_location=dropoff_location, start_odometer=start_odometer
+                                , end_odometer=end_odometer, daily_limit=daily_limit, add_coupon=add_coupon),
+                        code=303)
 
 
 @app.route('/vehicles/<string:vehicle_id>/payment', methods=['GET'])
 @login_required
 def rent_payment(vehicle_id):
-    vehicle_rs = get_vehicle_by_id(vehicle_id)
-    if vehicle_rs is not None:
-        vehicle = Vehicle(vehicle_rs[0][0], vehicle_rs[0][1])
-    return render_template("rent_payment.html", vehicle=vehicle, vehicle_images=vehicle_images)
+    vehicle = get_vehicle_by_id(vehicle_id)
+    pickup_date = request.args.get('pickup_date')
+    dropoff_date = request.args.get('dropoff_date')
+    pickup_location = request.args.get('pickup_location')
+    dropoff_location = request.args.get('dropoff_location')
+    start_odometer = request.args.get('start_odometer')
+    end_odometer = request.args.get('end_odometer')
+    daily_limit = request.args.get('daily_limit')
+    add_coupon = request.args.get('add_coupon')
+
+    cust_name = current_user.id
+    cust_id = get_user_id(cust_name)
+    if add_coupon == 'on':
+        coupon = get_coupon(cust_id)
+
+    rental_object_partial = Rental(pickup_date, dropoff_date, pickup_location, dropoff_location,
+                                   start_odometer, end_odometer, daily_limit)
+    base_payment, overmiles_payment, total_payment, discount = payment_calculate(vehicle_id
+                                                                                 , rental_object_partial, coupon)
+    return render_template("rent_payment.html", vehicle=vehicle, vehicle_images=vehicle_images
+                           , base_payment=base_payment, overmiles_payment=overmiles_payment, discount=discount
+                           , total_payment=total_payment)
 
 
 @app.route('/vehicles/<string:vehicle_id>/invoice', methods=['GET'])
@@ -143,3 +173,28 @@ def decrypt(string_encrypted):
 
 def load_key():
     return app_secret
+
+
+def payment_calculate(vehicle_id, rental, coupon):
+    veh_class = get_vehicle_class(vehicle_id)
+
+    pickup_date_list = rental.pickup_date.split('-')
+    dropoff_date_list = rental.dropoff_date.split('-')
+    pickup_date = date(int(pickup_date_list[0]), int(pickup_date_list[1]), int(pickup_date_list[2]))
+    dropoff_date = date(int(dropoff_date_list[0]), int(dropoff_date_list[1]), int(dropoff_date_list[2]))
+    days_between = (dropoff_date - pickup_date).days
+
+    # total payment = base payment + overmiles payment + discount
+    base_payment = days_between * int(veh_class.vc_rateperday)
+    total_limit = days_between * int(rental.daily_limit)
+    over_miles = (int(rental.end_odometer) - int(rental.start_odometer)) - total_limit
+    over_miles = 0 if over_miles < 0 else over_miles
+    overmiles_payment = over_miles * int(veh_class.vc_feeovermile)
+
+    total_payment = (base_payment + overmiles_payment)
+    discount = 0
+    if coupon is not None:
+        discount = total_payment * int(coupon.cou_rate) / 100
+        total_payment = total_payment * (1 - int(coupon.cou_rate) / 100)
+
+    return base_payment, overmiles_payment, total_payment, discount

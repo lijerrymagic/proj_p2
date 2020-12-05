@@ -58,6 +58,40 @@ class Location:
         self.location_id = location_id
 
 
+class Rental:
+    def __init__(self, pickup_date, dropoff_date, start_odometer, end_odometer, daily_limit, cust_id=None,
+                 cust_type=None, veh_id=None, ren_pickuplocid=None, ren_dropoffloc_id=None, inv_id=None, cou_id=None,
+                 rental_id=None):
+        self.pickup_date = pickup_date
+        self.dropoff_date = dropoff_date
+        self.start_odometer = start_odometer
+        self.end_odometer = end_odometer
+        self.daily_limit = daily_limit
+        self.cust_id = cust_id
+        self.cust_type = cust_type
+        self.veh_id = veh_id
+        self.ren_pickuplocid = ren_pickuplocid
+        self.ren_dropoffloc_id = ren_dropoffloc_id
+        self.inv_id = inv_id
+        self.cou_id = cou_id
+        self.rental_id = rental_id
+
+
+class Coupon:
+    def __init__(self, cou_rate, validstart, validend, cou_id=None):
+        self.cou_rate = cou_rate
+        self.validstart = validstart
+        self.validend = validend
+        self.cou_id = cou_id
+
+
+class VehicleClass:
+    def __init__(self, vc_name, vc_rateperday, vc_feeovermile, vc_num=None):
+        self.vc_name = vc_name
+        self.vc_rateperday = vc_rateperday
+        self.vc_feeovermile = vc_feeovermile
+        self.vc_num = vc_num
+
 @login_manager.user_loader
 def user_loader(cust_id):
     return User(cust_id, "admin")

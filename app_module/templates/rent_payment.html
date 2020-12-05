@@ -16,18 +16,23 @@
             <h1>Review And Pay</h1>
 			<div class="vehicle_card">
                   <div class="vehicle_image">
-                        <img src="{{vehicle_images[vehicle.name]}}" width="400" height="250">
+                        <img src="{{vehicle_images[vehicle.make + '_' +vehicle.model]}}" width="400" height="250">
                   </div>
                   <div class="vehicle_payment">
-				  	<h1>Total payment:</h1>
-
+				    <h2>Base payment: ${{ base_payment }}</h2>
+				    <h2>Overmiles payment: ${{ overmiles_payment }}</h2>
+				    {% if discount != 0 %}
+    					<h2>You saved: ${{ discount }}</h2>
+					{% endif %}
+				    <br><br>
+				    <h1>Total payment: ${{ total_payment }}</h1>
 				    <label for="email_address">Email for invoice:</label>
 				    <input type="text" id="email_address" name="email_address"><br><br>
 				  </div>
 
                   <div class="vehicle_buttons">
-					  <a class="button" href="{{ url_for('rent_invoice', vehicle_id=vehicle.name) }}"><button>Pay</button></a>
-					  <a class="button" href="{{ url_for('vehicle_page', vehicle_id=vehicle.name) }}"><button>Cancel</button></a>
+					  <a class="button" href="{{ url_for('rent_invoice', vehicle_id=vehicle.vhe_id) }}"><button>Pay</button></a>
+					  <a class="button" href="{{ url_for('vehicle_page', vehicle_id=vehicle.veh_id) }}"><button>Cancel</button></a>
                   </div>
               </div>
 		</div>
