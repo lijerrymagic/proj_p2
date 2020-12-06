@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WOW Man_Vehicles</title>
+    <link rel="stylesheet" href="../static/index.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+</head>
+<body>
+    <div class="navbar">
+        <a href="/index" style="text-decoration:none"><h1>WOW Rental</h1></a>
+        <a href="/logout" style="text-decoration:none; padding-right: 10px"><h1>Log out</h1></a>
+    </div>
+    <div class="login">
+        <h1>Vehicles</h1>
+        <form action="{{ url_for('man_vehicles') }}" method="post">
+            <label for="make">
+                <i class="fas fa-car"></i>
+            </label>
+            <input type="text" name="make" placeholder="Make" id="make" required><br>
+
+            <label for="model">
+                <i class="fas fa-car"></i>
+            </label>
+            <input type="text" name="model" placeholder="Model" id="model" required><br>
+
+            <label for="year">
+                <i class="fas fa-car"></i>
+            </label>
+            <input type="text" name="year" placeholder="Year" id="year" required><br>
+
+            <label for="vin_num">
+                <i class="fas fa-car"></i>
+            </label>
+            <input type="text" name="vin_num" placeholder="Vin_num" id="vin_num" required><br>
+
+            <label for="license_num">
+                <i class="fas fa-car"></i>
+            </label>
+            <input type="text" name="license_num" placeholder="License_num" id="license_num" required><br>
+
+            <label for="vehicle_images">
+                <i class="fas fa-image"></i>
+            </label>
+            <input type="text" name="vehicle_images" placeholder="Vehicle Images" id="vehicle_images"><br>
+
+            <label for="vehicle_class">
+                <i class="fas fa-car"></i>
+            </label>
+            <select name="vehicle_class" id="vehicle_class">
+            {% for class in classes %}
+                <option value= "{{class.vc_num}}">{{ class.vc_name }}, {{ class.vc_rateperday }}, {{ class.vc_feeovermile }}</option>
+            {% endfor %}
+            </select><br><br>
+
+            <label for="location">
+                <i class="fas fa-home"></i>
+            </label>
+            <select name="location" id="location">
+            {% for location in locations %}
+                <option value= "{{location.location_id}}">{{ location.street }}, {{ location.city }}, {{ location.state }}</option>
+            {% endfor %}
+            </select><br><br>
+
+
+            <div class="msg">{{ msg }}</div>
+            <input type="submit" value="insert">
+        </form>
+
+    </div>
+</body>
+</html>

@@ -3,7 +3,8 @@
 {% block form %}
     <h1>WOW Login</h1>
     <div class="links">
-        <a href="{{ url_for('login') }}">Login</a>
+        <a href="{{ url_for('login') }}">User Login</a>
+        <a href="{{ url_for('admin_login') }}" >Admin Login</a>
         <a href="{{ url_for('register') }}" class="active">Register</a>
     </div>
     <form action="{{ url_for('register') }}" method="post">
@@ -47,12 +48,12 @@
         </label>
         <input type="text" name="city" placeholder="City" id="city" required>
 
-         <label for="state">
+         <label for="street">
            <i class="fas fa-home"></i>
         </label>
         <input type="text" name="street" placeholder="Street" id="street" required>
 
-         <label for="state">
+         <label for="zipcode">
            <i class="fas fa-home"></i>
         </label>
         <input type="text" name="zipcode" placeholder="Zipcode" id="zipcode" required>

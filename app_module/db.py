@@ -45,6 +45,30 @@ def insert_customer(customer_obj):
     return rs[0][0]
 
 
+def insert_vehicle(vehicle_obj):
+    run_query('''insert into zlrz_vehicle (veh_make, veh_model, veh_year, veh_vin, veh_license, vc_num, ol_id) values (%s, %s, %s, %s, %s, %s, %s)'''
+              , (vehicle_obj.make, vehicle_obj.model, int(vehicle_obj.year), vehicle_obj.vin_num, vehicle_obj.license_num, vehicle_obj.class_num, vehicle_obj.location_id))
+    rs = run_query('''select * from zlrz_vehicle where veh_make = %s and veh_model = %s and veh_year = %s and veh_vin = %s and veh_license = %s and vc_num = %s and ol_id = %s'''
+                   , (vehicle_obj.make, vehicle_obj.model, int(vehicle_obj.year), vehicle_obj.vin_num, vehicle_obj.license_num, vehicle_obj.class_num, vehicle_obj.location_id))
+    return rs[0][0]
+
+
+def insert_vehicle_class(class_obj):
+    run_query('''insert into zlrz_vehicle_class (vc_name, vc_rateperday, vc_feeovermile) values (%s, %s, %s)'''
+              , (class_obj.vc_name, int(class_obj.vc_rateperday), int(class_obj.vc_feeovermile)))
+    rs = run_query('''select * from zlrz_vehicle_class where vc_name = %s and vc_rateperday = %s and vc_feeovermile = %s'''
+                   , (class_obj.vc_name, int(class_obj.vc_rateperday), int(class_obj.vc_feeovermile)))
+    return rs[0][0]
+
+
+def insert_office_location(location_obj):
+    run_query('''insert into zlrz_office_location (ol_phonenum, ol_state, ol_city, ol_street, ol_zipcode) values (%s, %s, %s, %s, %s)'''
+              , (location_obj.phone, location_obj.state, location_obj.city, location_obj.street, int(location_obj.zipcode)))
+    rs = run_query('''select * from zlrz_office_location where ol_phonenum = %s and ol_state = %s and ol_city = %s and ol_street=%s and ol_zipcode=%s'''
+                   , (location_obj.phone, location_obj.state, location_obj.city, location_obj.street, int(location_obj.zipcode)))
+    return rs[0][0]
+
+
 def get_password(username):
     rs = run_query('''select password from zlrz_customer where username = %s''', (username,))
     return rs[0][0] if rs is not None else rs
@@ -83,6 +107,14 @@ def get_all_locations():
     """
     rs = run_query('''select * from zlrz_office_location''')
     return [] if rs is None else list(map(lambda t: Location(t[1], t[2], t[3], t[4], t[5], t[0]), rs))
+
+def get_all_vehclasses():
+    """
+    Get all vehicleclass objects
+    :return:
+    """
+    rs = run_query('''select * from zlrz_vehicle_class''')
+    return [] if rs is None else list(map(lambda t: VehicleClass(t[1], t[2], t[3], t[0]), rs))
 
 
 def get_vehicle_by_id(vehicle_id):

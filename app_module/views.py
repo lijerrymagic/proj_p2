@@ -4,9 +4,9 @@ from werkzeug.utils import redirect
 from app_module import app
 from flask import request, render_template, url_for, session
 from app_module import db
-from app_module.db import insert_address, insert_customer, get_vehicle_by_id, get_vehicles, get_password, get_user_type, \
-    get_all_locations, get_user_id, get_coupon, get_vehicle_class
-from app_module.models import User, Vehicle, Address, Customer, Rental
+from app_module.db import insert_address, insert_customer, insert_vehicle, insert_vehicle_class, insert_office_location, get_vehicle_by_id, get_vehicles, get_password, get_user_type, \
+    get_all_locations, get_all_vehclasses, get_user_id, get_coupon, get_vehicle_class
+from app_module.models import User, Vehicle, Address, Customer, Rental, VehicleClass, Location
 from datetime import date
 
 vehicle_images = {
@@ -23,7 +23,8 @@ vehicle_images = {
 }
 
 app_secret = b'YdEadWnAevr_kqP6eTyGOQVjhAw3R0O1RnYLKFde9mU='
-
+admin_username = 'admin'
+admin_password = '1234'
 
 @app.route('/login', methods=['GET', 'POST'])
 @app.route('/', methods=['GET', 'POST'])
@@ -46,6 +47,19 @@ def login():
             else:
                 return "admin login"
     return 'Bad login'
+
+@app.route('/admin_login', methods=['GET', 'POST'])
+def admin_login():
+    if request.method == 'GET':
+        return render_template("admin_login.html")
+    username = request.form['username']
+    password = request.form['password']
+    if username == admin_username and password == admin_password:
+        user = User(username, "admin")
+        login_user(user)
+        return redirect(url_for('manage'))
+    else:
+        return "wrong password or username doesn't exist"
 
 
 @app.route('/logout')
@@ -78,6 +92,56 @@ def register():
         Customer("I", first_name, last_name, email, phone_num, addr_id, username, encrypted_password))
     return redirect(url_for("login"), code=303)
 
+
+@app.route('/manage')
+@login_required
+def manage():
+    return render_template("manage.html")
+
+
+@app.route('/man_veh_class', methods=['GET', 'POST'])
+@login_required
+def man_veh_class():
+    if request.method == 'GET':
+        return render_template("man_veh_class.html")
+    vc_name = request.form['vc_name']
+    vc_rateperday = request.form['vc_rateperday']
+    vc_feeovermile = request.form['vc_feeovermile']
+    class_obj = VehicleClass(vc_name, vc_rateperday, vc_feeovermile)
+    vc_num = insert_vehicle_class(class_obj)
+    return redirect(url_for("man_veh_class"), code=303)
+
+@app.route('/man_off_loc', methods=['GET', 'POST'])
+@login_required
+def man_off_loc():
+    if request.method == 'GET':
+        return render_template("man_off_loc.html")
+    phone = request.form['phone']
+    state = request.form['state']
+    city = request.form['city']
+    street = request.form['street']
+    zipcode = request.form['zipcode']
+    location_obj = Location(phone, state, city, street, zipcode)
+    ol_id = insert_office_location(location_obj)
+    return redirect(url_for("man_off_loc"), code=303)
+
+@app.route('/man_vehicles', methods=['GET', 'POST'])
+@login_required
+def man_vehicles():
+    if request.method == 'GET':
+        locations = get_all_locations()
+        classes  = get_all_vehclasses()
+        return render_template("man_vehicles.html", classes=classes, locations=locations)
+    make = request.form['make']
+    model = request.form['model']
+    year = request.form['year']
+    vin_num = request.form['vin_num']
+    license_num = request.form['license_num']
+    class_num = request.form['vehicle_class']
+    location_id = request.form['location']
+    vehicle_obj = Vehicle(make, model, year, vin_num, license_num, class_num, location_id)
+    veh_id = insert_vehicle(vehicle_obj)
+    return redirect(url_for("man_vehicles"), code=303)
 
 @app.route('/index')
 @login_required

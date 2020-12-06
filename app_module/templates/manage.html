@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WOW Manage</title>
+    <link rel="stylesheet" href="../static/index.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+</head>
+<body>
+    <div class="navbar">
+        <a href="/index" style="text-decoration:none"><h1>WOW Rental</h1></a>
+        <a href="/logout" style="text-decoration:none; padding-right: 10px"><h1>Log out</h1></a>
+    </div>
+
+    <div class="main">
+        <h1>WOW Admin Management System</h1>
+        <div class="vehicle_buttons">
+          <a class="button" href="{{ url_for('man_veh_class') }}"><button>Manage Vehicle Class</button></a>
+        </div>
+        <br>
+        <div class="vehicle_buttons">
+          <a class="button" href="{{ url_for('man_off_loc') }}"><button>Manage Office Location</button></a>
+        </div>
+        <br>
+        <div class="vehicle_buttons">
+          <a class="button" href="{{ url_for('man_vehicles') }}"><button>Manage Vehicles</button></a>
+        </div>
+    </div>
+
+
+
+
+
+</body>
+</html>

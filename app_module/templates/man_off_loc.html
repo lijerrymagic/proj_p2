@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WOW Man_Off_Loc</title>
+    <link rel="stylesheet" href="../static/index.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+</head>
+<body>
+    <div class="navbar">
+        <a href="/index" style="text-decoration:none"><h1>WOW Rental</h1></a>
+        <a href="/logout" style="text-decoration:none; padding-right: 10px"><h1>Log out</h1></a>
+    </div>
+
+    <div class="login">
+        <h1>Office Location</h1>
+        <form action="{{ url_for('man_off_loc') }}" method="post">
+            <label for="phone">
+           <i class="fas fa-phone"></i>
+        </label>
+        <input type="text" name="phone" placeholder="Phone Number" id="phone" required>
+
+         <label for="state">
+           <i class="fas fa-home"></i>
+        </label>
+        <input type="text" name="state" placeholder="State" id="state" required>
+
+         <label for="city">
+           <i class="fas fa-home"></i>
+        </label>
+        <input type="text" name="city" placeholder="City" id="city" required>
+
+         <label for="street">
+           <i class="fas fa-home"></i>
+        </label>
+        <input type="text" name="street" placeholder="Street" id="street" required>
+
+         <label for="zipcode">
+           <i class="fas fa-home"></i>
+        </label>
+        <input type="text" name="zipcode" placeholder="Zipcode" id="zipcode" required>
+
+        <div class="msg">{{ msg }}</div>
+        <input type="submit" value="insert">
+        </form>
+    </div>
+</body>
+</html>

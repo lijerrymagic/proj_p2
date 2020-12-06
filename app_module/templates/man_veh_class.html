@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WOW Man_Veh_Class</title>
+    <link rel="stylesheet" href="../static/index.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+</head>
+<body>
+    <div class="navbar">
+        <a href="/index" style="text-decoration:none"><h1>WOW Rental</h1></a>
+        <a href="/logout" style="text-decoration:none; padding-right: 10px"><h1>Log out</h1></a>
+    </div>
+    <div class="login">
+        <h1>Vehicle Class</h1>
+         <form action="{{ url_for('man_veh_class') }}" method="post">
+            <label for="vc_name">
+                <i class="fas fa-car"></i>
+            </label>
+            <input type="text" name="vc_name" placeholder="Vc_name" id="vc_name" required>
+
+            <label for="vc_rateperday">
+                <i class="fas fa-car"></i>
+            </label>
+            <input type="text" name="vc_rateperday" placeholder="Vc_rateperday" id="vc_rateperday" required>
+
+            <label for="vc_feeovermile">
+                <i class="fas fa-car"></i>
+            </label>
+            <input type="text" name="vc_feeovermile" placeholder="Vc_feeovermile" id="vc_feeovermile" required>
+            <div class="msg">{{ msg }}</div>
+            <input type="submit" value="insert">
+        </form>
+    </div>
+</body>
+</html>
