@@ -1,4 +1,4 @@
-app_module.idea/
-app_module.__pycache__/
+app_module/.idea/
+app_module/__pycache__/
 .DS_Store
 .idea/
