@@ -26,12 +26,24 @@
 					{% endif %}
 				    <br><br>
 				    <h1>Total payment: ${{ total_payment }}</h1>
-				    <label for="email_address">Email for invoice:</label>
-				    <input type="text" id="email_address" name="email_address"><br><br>
+				    <form action="" id="pay_form" method="post">
+						<label for="pay_method">Pick up location:</label>
+						  <select name="pay_method" id="pay_method">
+							  <option value= "credit">Credit Card</option>
+							  <option value= "debit">Dedit Card</option>
+							  <option value= "gift_card">Gift Card</option>
+						  </select><br><br>
+
+						<label for="card_num">Card number:</label>
+				        <input type="number" id="card_num" name="card_num"><br><br>
+
+						<label for="email_address">Email for invoice:</label>
+				        <input type="email" id="email_address" name="email_address"><br><br>
+				    </form>
 				  </div>
 
                   <div class="vehicle_buttons">
-					  <a class="button" href="{{ url_for('rent_invoice', vehicle_id=vehicle.vhe_id) }}"><button>Pay</button></a>
+					  <button type="submit" form="pay_form" class="rent_button">Pay</button>
 					  <a class="button" href="{{ url_for('vehicle_page', vehicle_id=vehicle.veh_id) }}"><button>Cancel</button></a>
                   </div>
               </div>

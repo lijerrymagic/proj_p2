@@ -16,11 +16,12 @@
             <h1>Invoice</h1>
 			<div class="vehicle_card">
                   <div class="vehicle_image">
-                        <img src="{{vehicle_images[vehicle.name]}}" width="400" height="250">
+                        <img src="{{vehicle_images[vehicle.make + '_' +vehicle.model]}}" width="400" height="250">
                   </div>
                   <div class="vehicle_payment">
 				  	<h1>You are all set!</h1>
-				    <h3>Here's your invoice brief:</h3>
+				    <h3>You paid: ${{ total_payment }}</h3><br><br>
+				    <h3>A digital invoice has been sent to: {{ email_address }}</h3>
 				  </div>
 
                   <div class="vehicle_buttons">

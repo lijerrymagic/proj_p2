@@ -46,9 +46,11 @@ def insert_customer(customer_obj):
 
 
 def insert_vehicle(vehicle_obj):
-    run_query('''insert into zlrz_vehicle (veh_make, veh_model, veh_year, veh_vin, veh_license, vc_num, ol_id) values (%s, %s, %s, %s, %s, %s, %s)'''
+    run_query('''insert into zlrz_vehicle (veh_make, veh_model, veh_year, veh_vin, veh_license, vc_num, ol_id) values 
+    (%s, %s, %s, %s, %s, %s, %s) '''
               , (vehicle_obj.make, vehicle_obj.model, int(vehicle_obj.year), vehicle_obj.vin_num, vehicle_obj.license_num, vehicle_obj.class_num, vehicle_obj.location_id))
-    rs = run_query('''select * from zlrz_vehicle where veh_make = %s and veh_model = %s and veh_year = %s and veh_vin = %s and veh_license = %s and vc_num = %s and ol_id = %s'''
+    rs = run_query('''select * from zlrz_vehicle where veh_make = %s and veh_model = %s and veh_year = %s and veh_vin 
+    = %s and veh_license = %s and vc_num = %s and ol_id = %s '''
                    , (vehicle_obj.make, vehicle_obj.model, int(vehicle_obj.year), vehicle_obj.vin_num, vehicle_obj.license_num, vehicle_obj.class_num, vehicle_obj.location_id))
     return rs[0][0]
 
@@ -56,17 +58,45 @@ def insert_vehicle(vehicle_obj):
 def insert_vehicle_class(class_obj):
     run_query('''insert into zlrz_vehicle_class (vc_name, vc_rateperday, vc_feeovermile) values (%s, %s, %s)'''
               , (class_obj.vc_name, int(class_obj.vc_rateperday), int(class_obj.vc_feeovermile)))
-    rs = run_query('''select * from zlrz_vehicle_class where vc_name = %s and vc_rateperday = %s and vc_feeovermile = %s'''
+    rs = run_query('''select * from zlrz_vehicle_class where vc_name = %s and vc_rateperday = %s and vc_feeovermile = 
+    %s '''
                    , (class_obj.vc_name, int(class_obj.vc_rateperday), int(class_obj.vc_feeovermile)))
     return rs[0][0]
 
 
 def insert_office_location(location_obj):
-    run_query('''insert into zlrz_office_location (ol_phonenum, ol_state, ol_city, ol_street, ol_zipcode) values (%s, %s, %s, %s, %s)'''
+    run_query('''insert into zlrz_office_location (ol_phonenum, ol_state, ol_city, ol_street, ol_zipcode) values (%s, 
+    %s, %s, %s, %s) '''
               , (location_obj.phone, location_obj.state, location_obj.city, location_obj.street, int(location_obj.zipcode)))
-    rs = run_query('''select * from zlrz_office_location where ol_phonenum = %s and ol_state = %s and ol_city = %s and ol_street=%s and ol_zipcode=%s'''
+    rs = run_query('''select * from zlrz_office_location where ol_phonenum = %s and ol_state = %s and ol_city = %s 
+    and ol_street=%s and ol_zipcode=%s '''
                    , (location_obj.phone, location_obj.state, location_obj.city, location_obj.street, int(location_obj.zipcode)))
     return rs[0][0]
+
+
+def insert_invoice(invoice_obj):
+    run_query('''insert into zlrz_invoice (inv_date, inv_amount) values (%s, %s) '''
+              , (invoice_obj.inv_date, invoice_obj.inv_amount))
+    rs = run_query('''select * from zlrz_invoice where inv_date = %s and inv_amount = %s'''
+                   , (invoice_obj.inv_date, invoice_obj.inv_amount))
+    return rs[0][0]
+
+
+def insert_payment(payment_obj):
+    run_query('''insert into zlrz_payment (pay_date, pay_method, pay_cardnum, inv_id, pay_amount) 
+    values (%s, %s , %s , %s , %s) '''
+              , (payment_obj.pay_date, payment_obj.pay_method, payment_obj.pay_cardnum, payment_obj.inv_id
+                 , payment_obj.pay_amount))
+
+
+def insert_rental(rental_obj):
+    run_query('''insert into zlrz_rental (ren_pickupdate, ren_dropoffdate, ren_startodometer, ren_endodometer
+    , ren_dailylimit, cust_id, cust_type, veh_id, ren_pickuplocid, ren_dropoffloc_id, inv_id, cou_id) 
+    values (%s, %s , %s , %s , %s, %s, %s, %s, %s, %s, %s, %s) '''
+              , (rental_obj.ren_pickupdate, rental_obj.ren_dropoffdate, rental_obj.ren_startodometer
+                 , rental_obj.ren_endodometer, rental_obj.ren_dailylimit, rental_obj.cust_id
+                 , rental_obj.cust_type, rental_obj.veh_id, rental_obj.ren_pickuplocid, rental_obj.ren_dropoffloc_id
+                 , rental_obj.inv_id, rental_obj.cou_id))
 
 
 def get_password(username):

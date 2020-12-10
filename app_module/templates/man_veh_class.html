@@ -15,21 +15,21 @@
         <h1>Vehicle Class</h1>
          <form action="{{ url_for('man_veh_class') }}" method="post">
             <label for="vc_name">
-                <i class="fas fa-car"></i>
+                <i class="fas fa-user"></i>
             </label>
-            <input type="text" name="vc_name" placeholder="Vc_name" id="vc_name" required>
+            <input type="text" name="vc_name" placeholder="Vehicle class name" id="vc_name" required>
 
             <label for="vc_rateperday">
                 <i class="fas fa-car"></i>
             </label>
-            <input type="text" name="vc_rateperday" placeholder="Vc_rateperday" id="vc_rateperday" required>
+            <input type="text" name="vc_rateperday" placeholder="Rate per day" id="vc_rateperday" required>
 
             <label for="vc_feeovermile">
-                <i class="fas fa-car"></i>
+                <i class="fas fa-user"></i>
             </label>
-            <input type="text" name="vc_feeovermile" placeholder="Vc_feeovermile" id="vc_feeovermile" required>
+            <input type="text" name="vc_feeovermile" placeholder="Overmile fee" id="vc_feeovermile" required>
             <div class="msg">{{ msg }}</div>
-            <input type="submit" value="insert">
+            <input type="submit" value="Add vehicle class">
         </form>
     </div>
 </body>
