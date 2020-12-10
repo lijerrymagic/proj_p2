@@ -6,8 +6,9 @@
         <a href="{{ url_for('login') }}">User Login</a>
         <a href="{{ url_for('admin_login') }}" >Admin Login</a>
         <a href="{{ url_for('register') }}" class="active">Register</a>
+        <a href="{{ url_for('corp_register') }}">Corporation Register</a>
     </div>
-    <form action="{{ url_for('register') }}" method="post">
+    <form id="fom1" action="{{ url_for('register') }}" method="post">
         <label for="username">
             <i class="fas fa-user"></i>
         </label>
@@ -27,6 +28,11 @@
             <i class="fas fa-user"></i>
         </label>
         <input type="text" name="lastname" placeholder="Last Name" id="lastname" required>
+
+        <label for="cust_type">
+            <i class="fas fa-list-alt"></i>
+        </label>
+        <input type="text" name="cust_type" placeholder="Customer Type('I' or 'C')" id="cust_type" required>
 
         <label for="email">
             <i class="fas fa-envelope-square"></i>
@@ -58,7 +64,38 @@
         </label>
         <input type="text" name="zipcode" placeholder="Zipcode" id="zipcode" required>
 
+
+        <label for="cust_driverlicnum">
+            <i class="fas fa-id-card-alt"></i>
+        </label>
+        <input type="text" name="cust_driverlicnum" placeholder="Customer Driver License Number" id="cust_driverlicnum">
+
+        <label for="cust_insurcompname">
+            <i class="fas fa-building"></i>
+        </label>
+        <input type="text" name="cust_insurcompname" placeholder="Insurance Company Name" id="cust_insurcompname">
+
+        <label for="cust_insurpolnum">
+            <i class="fas fa-id-card-alt"></i>
+        </label>
+        <input type="text" name="cust_insurpolnum" placeholder="Insurance Policy Number" id="cust_insurpolnum">
+
+        <label for="emp_id">
+            <i class="fas fa-id-card-alt"></i>
+        </label>
+        <input type="text" name="emp_id" placeholder="Employee ID" id="emp_id">
+
+        <label for="corporations">
+            <i class="fas fa-building"></i>
+        </label>
+        <select name="corporations" id="corporations">
+        {% for corporation in corporations %}
+            <option value= "{{corporation.corp_id}}">{{ corporation.corp_name }}, {{ corporation.corp_regnum }}</option>
+        {% endfor %}
+        </select><br><br>
+
         <div class="msg">{{ msg }}</div>
         <input type="submit" value="Register">
     </form>
+
 {% endblock %}

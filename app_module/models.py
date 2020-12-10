@@ -92,6 +92,31 @@ class VehicleClass:
         self.vc_feeovermile = vc_feeovermile
         self.vc_num = vc_num
 
+
+class Corporation:
+    def __init__(self, corp_name, corp_regnum, corp_id=None):
+        self.corp_name = corp_name
+        self.corp_regnum = corp_regnum
+        self.corp_id = corp_id
+
+
+class Individual:
+    def __init__(self, cust_id, cust_driverlicnum, cust_insurcompname, cust_insurpolnum, cust_type):
+        self.cust_id = cust_id
+        self.cust_driverlicnum = cust_driverlicnum
+        self.cust_insurcompname = cust_insurcompname
+        self.cust_insurpolnum = cust_insurpolnum
+        self.cust_type = cust_type
+
+
+class Corporate:
+    def __init__(self, cust_id, employee_id, corp_id, cust_type):
+        self.cust_id = cust_id
+        self.employee_id = employee_id
+        self.corp_id = corp_id
+        self.cust_type = cust_type
+
+
 @login_manager.user_loader
 def user_loader(cust_id):
     return User(cust_id, "admin")

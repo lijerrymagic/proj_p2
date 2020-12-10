@@ -4,9 +4,9 @@ from werkzeug.utils import redirect
 from app_module import app
 from flask import request, render_template, url_for, session
 from app_module import db
-from app_module.db import insert_address, insert_customer, insert_vehicle, insert_vehicle_class, insert_office_location, get_vehicle_by_id, get_vehicles, get_password, get_user_type, \
-    get_all_locations, get_all_vehclasses, get_user_id, get_coupon, get_vehicle_class
-from app_module.models import User, Vehicle, Address, Customer, Rental, VehicleClass, Location
+from app_module.db import insert_address, insert_customer, insert_vehicle, insert_vehicle_class, insert_office_location, insert_corporation, insert_individual, insert_corporate, get_vehicle_by_id, get_vehicles, get_password, get_user_type, \
+    get_all_locations, get_all_vehclasses, get_user_id, get_coupon, get_vehicle_class, get_all_corporations, get_all_vehicles, get_all_customers, delete_corporation, delete_customer, delete_off_loc, delete_veh_class, delete_vehicle
+from app_module.models import User, Vehicle, Address, Customer, Rental, VehicleClass, Location, Corporation, Individual, Corporate
 from datetime import date
 
 vehicle_images = {
@@ -36,17 +36,14 @@ def login():
     db_password = decrypt(get_password(username))
     if db_password is not None:
         if password == db_password:
-            if get_user_type(username) == "I":
-                user = User(username, "user")
-            else:
-                user = User(username, "admin")
-            user.id = username
+            user = User(username, "user")
             login_user(user)
-            if user.user_type == "user":
-                return redirect(url_for('index'))
-            else:
+            if username == 'admin':
                 return "admin login"
+            else:
+                return redirect(url_for('index'))
     return 'Bad login'
+
 
 @app.route('/admin_login', methods=['GET', 'POST'])
 def admin_login():
@@ -54,12 +51,15 @@ def admin_login():
         return render_template("admin_login.html")
     username = request.form['username']
     password = request.form['password']
-    if username == admin_username and password == admin_password:
-        user = User(username, "admin")
-        login_user(user)
-        return redirect(url_for('manage'))
-    else:
-        return "wrong password or username doesn't exist"
+    db_password = decrypt(get_password(username))
+    if db_password is not None:
+        if password == db_password:
+            user = User(username, "admin")
+            login_user(user)
+            return redirect(url_for('manage'))
+        else:
+            return "wrong password"
+    return "username doesn't exist"
 
 
 @app.route('/logout')
@@ -71,9 +71,11 @@ def logout():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'GET':
-        return render_template("register.html")
+        corporations = get_all_corporations()
+        return render_template("register.html", corporations = corporations)
     first_name = request.form['firstname']
     last_name = request.form['lastname']
+    cust_type = request.form['cust_type']
     email = request.form['email']
     phone_num = request.form['phone']
     username = request.form['username']
@@ -82,6 +84,11 @@ def register():
     city = request.form['city']
     street = request.form['street']
     zipcode = request.form['zipcode']
+    cust_driverlicnum = request.form['cust_driverlicnum']
+    cust_insurcompname = request.form['cust_insurcompname']
+    cust_insurpolnum = request.form['cust_insurpolnum']
+    employee_id = request.form['emp_id']
+    corp_id = request.form.get('corporations')
 
     encrypted_password = encrypt(password)
 
@@ -90,6 +97,26 @@ def register():
     addr_id = insert_address(address_obj)
     cust_id = insert_customer(
         Customer("I", first_name, last_name, email, phone_num, addr_id, username, encrypted_password))
+    if cust_type == "I":
+        individual_obj = Individual(cust_id, cust_driverlicnum, cust_insurcompname, cust_insurpolnum, cust_type)
+        insert_individual(individual_obj)
+    elif cust_type == "C":
+        corporate_obj = Corporate(cust_id, employee_id, corp_id, cust_type)
+        insert_corporate(corporate_obj)
+
+    return redirect(url_for("login"), code=303)
+
+
+@app.route('/corp_register', methods=['GET', 'POST'])
+def corp_register():
+    if request.method == 'GET':
+        return render_template("corporation.html")
+
+    corp_name = request.form['corp_name']
+    corp_regnum = request.form['corp_regnum']
+
+    corp_obj = Corporation(corp_name, corp_regnum)
+    corp_id = insert_corporation(corp_obj)
     return redirect(url_for("login"), code=303)
 
 
@@ -97,6 +124,31 @@ def register():
 @login_required
 def manage():
     return render_template("manage.html")
+
+
+@app.route('/man_delete', methods=['GET', 'POST'])
+@login_required
+def man_delete():
+    if request.method == 'GET':
+        locations = get_all_locations()
+        classes  = get_all_vehclasses()
+        vehicles = get_all_vehicles()
+        customers = get_all_customers()
+        corporations = get_all_corporations()
+        return render_template("man_delete.html", classes = classes, locations = locations, vehicles = vehicles,
+                               customers = customers, corporations = corporations)
+    vc_num =  request.form.get('vehicle_class')
+    location_id = request.form.get('location')
+    veh_id = request.form.get('vehicle')
+    cust_id = request.form.get('customer')
+    corp_id = request.form.get('corporation')
+    delete_veh_class(vc_num)
+    delete_off_loc(location_id)
+    delete_vehicle(veh_id)
+    delete_customer(cust_id)
+    delete_corporation(corp_id)
+
+    return redirect(url_for("man_delete"), code=303)
 
 
 @app.route('/man_veh_class', methods=['GET', 'POST'])
@@ -111,6 +163,7 @@ def man_veh_class():
     vc_num = insert_vehicle_class(class_obj)
     return redirect(url_for("man_veh_class"), code=303)
 
+
 @app.route('/man_off_loc', methods=['GET', 'POST'])
 @login_required
 def man_off_loc():
@@ -124,6 +177,7 @@ def man_off_loc():
     location_obj = Location(phone, state, city, street, zipcode)
     ol_id = insert_office_location(location_obj)
     return redirect(url_for("man_off_loc"), code=303)
+
 
 @app.route('/man_vehicles', methods=['GET', 'POST'])
 @login_required
@@ -142,6 +196,7 @@ def man_vehicles():
     vehicle_obj = Vehicle(make, model, year, vin_num, license_num, class_num, location_id)
     veh_id = insert_vehicle(vehicle_obj)
     return redirect(url_for("man_vehicles"), code=303)
+
 
 @app.route('/index')
 @login_required

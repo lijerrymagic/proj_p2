@@ -1,0 +1,26 @@
+{% extends 'login_base.html' %}
+
+{% block form %}
+    <h1>WOW Login</h1>
+    <div class="links">
+        <a href="{{ url_for('login') }}">User Login</a>
+        <a href="{{ url_for('admin_login') }}" >Admin Login</a>
+        <a href="{{ url_for('register') }}">Register</a>
+        <a href="{{ url_for('corp_register') }}" class="active">Corporation Register</a>
+    </div>
+    <form action="{{ url_for('corp_register') }}" method="post">
+        <label for="corp_name">
+            <i class="fas fa-building"></i>
+        </label>
+        <input type="text" name="corp_name" placeholder="Corporation Name" id="corp_name" required>
+
+        <label for="corp_regnum">
+            <i class="fas fa-id-card-alt"></i>
+        </label>
+        <input type="text" name="corp_regnum" placeholder="Registration Number of Corporation" id="corp_regnum" required>
+
+        <div class="msg">{{ msg }}</div>
+        <input type="submit" value="Register">
+
+    </form>
+{% endblock %}

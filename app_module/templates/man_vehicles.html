@@ -13,9 +13,9 @@
     </div>
     <div class="login">
         <h1>Vehicles</h1>
-        <form action="{{ url_for('man_vehicles') }}" method="post">
+        <form id="vehicle_form" action="" method="post">
             <label for="make">
-                <i class="fas fa-car"></i>
+                <i class="fas fa-user-tie"></i>
             </label>
             <input type="text" name="make" placeholder="Make" id="make" required><br>
 
@@ -25,24 +25,19 @@
             <input type="text" name="model" placeholder="Model" id="model" required><br>
 
             <label for="year">
-                <i class="fas fa-car"></i>
+                <i class="fas fa-calendar-alt"></i>
             </label>
             <input type="text" name="year" placeholder="Year" id="year" required><br>
 
             <label for="vin_num">
-                <i class="fas fa-car"></i>
+                <i class="fas fa-id-card-alt"></i>
             </label>
             <input type="text" name="vin_num" placeholder="Vin_num" id="vin_num" required><br>
 
             <label for="license_num">
-                <i class="fas fa-car"></i>
+                <i class="fas fa-id-card-alt"></i>
             </label>
             <input type="text" name="license_num" placeholder="License_num" id="license_num" required><br>
-
-            <label for="vehicle_images">
-                <i class="fas fa-image"></i>
-            </label>
-            <input type="text" name="vehicle_images" placeholder="Vehicle Images" id="vehicle_images"><br>
 
             <label for="vehicle_class">
                 <i class="fas fa-car"></i>
@@ -62,10 +57,14 @@
             {% endfor %}
             </select><br><br>
 
-
             <div class="msg">{{ msg }}</div>
-            <input type="submit" value="insert">
         </form>
+
+        <div class="vehicle_buttons">
+          <button type="submit" form="vehicle_form">Add Vehicle</button>
+          <a class="button" href="{{ url_for('manage') }}"><button>Back</button></a>
+        </div>
+
 
     </div>
 </body>

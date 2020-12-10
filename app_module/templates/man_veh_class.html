@@ -13,24 +13,29 @@
     </div>
     <div class="login">
         <h1>Vehicle Class</h1>
-         <form action="{{ url_for('man_veh_class') }}" method="post">
+         <form id ="class_form" action="" method="post">
             <label for="vc_name">
                 <i class="fas fa-car"></i>
             </label>
             <input type="text" name="vc_name" placeholder="Vc_name" id="vc_name" required>
 
             <label for="vc_rateperday">
-                <i class="fas fa-car"></i>
+                <i class="fas fa-dollar-sign"></i>
             </label>
             <input type="text" name="vc_rateperday" placeholder="Vc_rateperday" id="vc_rateperday" required>
 
             <label for="vc_feeovermile">
-                <i class="fas fa-car"></i>
+                <i class="fas fa-dollar-sign"></i>
             </label>
             <input type="text" name="vc_feeovermile" placeholder="Vc_feeovermile" id="vc_feeovermile" required>
             <div class="msg">{{ msg }}</div>
-            <input type="submit" value="insert">
         </form>
+
+        <div class="vehicle_buttons">
+          <button type="submit" form="class_form">Add Vehicle Class</button>
+          <a class="button" href="{{ url_for('manage') }}"><button>Back</button></a>
+        </div>
+
     </div>
 </body>
 </html>

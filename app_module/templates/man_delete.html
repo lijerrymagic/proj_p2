@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WOW Man_Vehicles</title>
+    <link rel="stylesheet" href="../static/index.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+</head>
+<body>
+    <div class="navbar">
+        <a href="/index" style="text-decoration:none"><h1>WOW Rental</h1></a>
+        <a href="/logout" style="text-decoration:none; padding-right: 10px"><h1>Log out</h1></a>
+    </div>
+    <div class="main", align="center">
+        <h1>Delete Records</h1>
+        <form id="form1" action="{{ url_for('man_delete') }}" method="post">
+            <label for="vehicle_class">
+                Vehicle Classes:
+            </label>
+            <select name="vehicle_class" id="vehicle_class">
+                <option value="" selected></option>
+            {% for class in classes %}
+                <option value= "{{class.vc_num}}">{{ class.vc_num }}, {{ class.vc_name }}, {{ class.vc_rateperday }}, {{ class.vc_feeovermile }}</option>
+            {% endfor %}
+            </select><br><br>
+
+            <label for="location">
+                Office Locations:
+            </label>
+            <select name="location" id="location">
+                <option value="" selected></option>
+            {% for location in locations %}
+                <option value= "{{location.location_id}}">{{ location.location_id }}, {{ location.street }}, {{ location.city }}, {{ location.state }}</option>
+            {% endfor %}
+            </select><br><br>
+
+            <label for="vehicle">
+                Rental Vehicles:
+            </label>
+            <select name="vehicle" id="vehicle">
+                <option value="" selected></option>
+            {% for vehicle in vehicles %}
+                <option value= "{{vehicle.veh_id}}">{{ vehicle.veh_id }}, {{ vehicle.make }}, {{ vehicle.model }}, {{ vehicle.year }}</option>
+            {% endfor %}
+            </select><br><br>
+
+            <label for="customer">
+                Customers:
+            </label>
+            <select name="customer" id="customer">
+                <option value="" selected></option>
+            {% for customer in customers %}
+                <option value= "{{customer.cust_id}}">{{ customer.cust_id }}, {{ customer.cust_type }}, {{ customer.first_name }}, {{ customer.last_name }}</option>
+            {% endfor %}
+            </select><br><br>
+
+            <label for="corporation">
+                Corporations:
+            </label>
+            <select name="corporation" id="corporation">
+                <option value="" selected></option>
+            {% for corporation in corporations %}
+                <option value= "{{corporation.corp_id}}">{{ corporation.corp_id }}, {{ corporation.corp_name }}, {{ corporation.corp_regnum }}</option>
+            {% endfor %}
+            </select><br><br>
+
+            <div class="msg">{{ msg }}</div>
+        </form>
+
+        <div class="vehicle_buttons">
+          <button type="submit" form="form1">Delete Record</button>
+          <a class="button" href="{{ url_for('manage') }}"><button>Back</button></a>
+        </div>
+
+
+    </div>
+</body>
+</html>

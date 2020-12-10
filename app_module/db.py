@@ -1,5 +1,5 @@
 import pymysql
-from app_module.models import User, Vehicle, Address, Customer, Location, Coupon, VehicleClass
+from app_module.models import User, Vehicle, Address, Customer, Location, Coupon, VehicleClass, Corporation, Corporate
 
 HOSTNAME = 'localhost'
 USERNAME = 'root'
@@ -69,6 +69,29 @@ def insert_office_location(location_obj):
     return rs[0][0]
 
 
+def insert_corporation(corp_obj):
+    run_query('''insert into zlrz_corporation (corp_name, corp_regnum) values (%s, %s)'''
+              , (corp_obj.corp_name, corp_obj.corp_regnum))
+    rs = run_query('''select * from zlrz_corporation where corp_name = %s and corp_regnum = %s'''
+                   , (corp_obj.corp_name, corp_obj.corp_regnum))
+    return rs[0][0]
+
+
+def insert_corporate(corporate_obj):
+    run_query('''insert into zlrz_corporate (cust_id, employee_id, corp_id, cust_type) values (%s, %s, %s, %s)'''
+              , (corporate_obj.cust_id, corporate_obj.employee_id, corporate_obj.corp_id, corporate_obj.cust_type))
+    rs = run_query('''select * from zlrz_corporate where cust_id = %s and employee_id = %s and corp_id = %s and cust_type = %s'''
+                   , (corporate_obj.cust_id, corporate_obj.employee_id, corporate_obj.corp_id, corporate_obj.cust_type))
+    return rs[0][0]
+
+
+def insert_individual(individual_obj):
+    run_query('''insert into zlrz_individual (cust_id, cust_driverlicnum, cust_insurcompname, cust_insurpolnum, cust_type) values (%s, %s, %s, %s, %s)'''
+              , (individual_obj.cust_id, individual_obj.cust_driverlicnum, individual_obj.cust_insurcompname, individual_obj.cust_type))
+    rs = run_query('''select * from zlrz_individual where cust_id = %s and cust_driverlicnum = %s and cust_insurcompname = %s and cust_insurpolnum = %s and cust_type = %s'''
+                   , (individual_obj.cust_id, individual_obj.cust_driverlicnum, individual_obj.cust_insurcompname, individual_obj.cust_type))
+    return rs[0][0]
+
 def get_password(username):
     rs = run_query('''select password from zlrz_customer where username = %s''', (username,))
     return rs[0][0] if rs is not None else rs
@@ -82,6 +105,12 @@ def get_user_type(username):
 def get_user_id(username):
     rs = run_query('''select cust_id from zlrz_customer where username = %s''', (username,))
     return rs[0][0] if rs is not None else rs
+
+
+def get_all_corporations():
+    rs = run_query('''select * from zlrz_corporation''')
+    return [] if rs is None else list(map(lambda t: Corporation(t[1], t[2], t[0]), rs))
+
 
 
 def get_coupon(cust_id):
@@ -98,6 +127,25 @@ def get_vehicles():
     """
     rs = run_query('''select * from zlrz_vehicle''')
     return [] if rs is None else rs
+
+def get_all_customers():
+    rs = run_query('''select * from zlrz_customer''')
+    return [] if rs is None else list(map(lambda t: Customer(t[1], t[2], t[3], t[4], t[5], t[6], t[7], t[8], t[0]), rs))
+
+
+def get_all_corporate():
+    rs = run_query('''select * from zlrz_corporate''')
+    return [] if rs is None else list(map(lambda t: Corporate(t[0], t[1], t[2], t[3]), rs))
+
+
+def get_all_individual():
+    rs = run_query('''select * from zlrz_individual''')
+    return [] if rs is None else list(map(lambda t: Corporate(t[0], t[1], t[2], t[3], t[4]), rs))
+
+
+def get_all_vehicles():
+    rs = run_query('''select * from zlrz_vehicle''')
+    return [] if rs is None else list(map(lambda t: Vehicle(t[1], t[2], t[3], t[4], t[5], t[6], t[7], t[0]), rs))
 
 
 def get_all_locations():
@@ -127,3 +175,40 @@ def get_vehicle_class(vehicle_id):
     rs = run_query('''select zlrz_vehicle_class.* from zlrz_vehicle join zlrz_vehicle_class 
     on zlrz_vehicle.vc_num = zlrz_vehicle_class.vc_num where zlrz_vehicle.veh_id=%s''', (int(vehicle_id),))
     return list(map(lambda t: VehicleClass(t[1], t[2], t[3], t[0]), rs))[0] if rs is not None else None
+
+
+def delete_veh_class(vc_num):
+    if vc_num == '':
+        return
+    rs = run_query('''delete from zlrz_vehicle_class where vc_num=%s''', (int(vc_num)))
+    return rs
+
+
+def delete_off_loc(location_id):
+    if location_id == '':
+        return
+    rs = run_query('''delete from zlrz_office_location where ol_id=%s''', (int(location_id)))
+    return rs
+
+
+def delete_vehicle(veh_id):
+    if veh_id == '':
+        return
+    rs = run_query('''delete from zlrz_vehicle where veh_id=%s''', (int(veh_id)))
+    return rs
+
+
+def delete_customer(cust_id):
+    if cust_id == '':
+        return
+    rs1 = run_query('''delete from zlrz_customer where cust_id=%s''', (int(cust_id)))
+    rs2 = run_query('''delete from zlrz_corporate where cust_id=%s''', (int(cust_id)))
+    rs3 = run_query('''delete from zlrz_individual where cust_id=%s''', (int(cust_id)))
+    return rs1
+
+
+def delete_corporation(corp_id):
+    if corp_id == '':
+        return
+    rs = run_query('''delete from zlrz_corporation where corp_id=%s''', (int(corp_id)))
+    return rs
