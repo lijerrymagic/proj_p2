@@ -58,25 +58,6 @@ class Location:
         self.location_id = location_id
 
 
-class Rental:
-    def __init__(self, pickup_date, dropoff_date, start_odometer, end_odometer, daily_limit, cust_id=None,
-                 cust_type=None, veh_id=None, ren_pickuplocid=None, ren_dropoffloc_id=None, inv_id=None, cou_id=None,
-                 rental_id=None):
-        self.pickup_date = pickup_date
-        self.dropoff_date = dropoff_date
-        self.start_odometer = start_odometer
-        self.end_odometer = end_odometer
-        self.daily_limit = daily_limit
-        self.cust_id = cust_id
-        self.cust_type = cust_type
-        self.veh_id = veh_id
-        self.ren_pickuplocid = ren_pickuplocid
-        self.ren_dropoffloc_id = ren_dropoffloc_id
-        self.inv_id = inv_id
-        self.cou_id = cou_id
-        self.rental_id = rental_id
-
-
 class Coupon:
     def __init__(self, cou_rate, validstart, validend, cou_id=None):
         self.cou_rate = cou_rate
@@ -93,6 +74,7 @@ class VehicleClass:
         self.vc_num = vc_num
 
 
+<<<<<<< HEAD
 class Corporation:
     def __init__(self, corp_name, corp_regnum, corp_id=None):
         self.corp_name = corp_name
@@ -115,6 +97,42 @@ class Corporate:
         self.employee_id = employee_id
         self.corp_id = corp_id
         self.cust_type = cust_type
+=======
+class Invoice:
+    def __init__(self, inv_date, inv_amount, inv_id=None):
+        self.inv_date = inv_date
+        self.inv_amount = inv_amount
+        self.inv_id = inv_id
+
+
+class Payment:
+    def __init__(self, pay_date, pay_method, pay_cardnum, inv_id, pay_amount, pay_id=None):
+        self.pay_date = pay_date
+        self.pay_method = pay_method
+        self.pay_cardnum = pay_cardnum
+        self.inv_id = inv_id
+        self.pay_amount = pay_amount
+        self.pay_id = pay_id
+
+
+class Rental:
+    def __init__(self, ren_pickupdate, ren_dropoffdate, ren_startodometer, ren_endodometer, ren_dailylimit, cust_id=None
+                 , cust_type=None, veh_id=None, ren_pickuplocid=None, ren_dropoffloc_id=None, inv_id=None, cou_id=None
+                 , ren_id=None):
+        self.ren_pickupdate = ren_pickupdate
+        self.ren_dropoffdate = ren_dropoffdate
+        self.ren_startodometer = ren_startodometer
+        self.ren_endodometer = ren_endodometer
+        self.ren_dailylimit = ren_dailylimit
+        self.cust_id = cust_id
+        self.cust_type = cust_type
+        self.veh_id = veh_id
+        self.ren_pickuplocid = ren_pickuplocid
+        self.ren_dropoffloc_id = ren_dropoffloc_id
+        self.inv_id = inv_id
+        self.cou_id = cou_id
+        self.ren_id = ren_id
+>>>>>>> af79ac2185c7fa1ae3da28359385dd963ac66ce4
 
 
 @login_manager.user_loader

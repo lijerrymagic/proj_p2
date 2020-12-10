@@ -1,12 +1,24 @@
+import smtplib
+from email.header import Header
+from email.mime.text import MIMEText
+
 from cryptography.fernet import Fernet
 from flask_login import login_user, login_required, current_user, logout_user
 from werkzeug.utils import redirect
 from app_module import app
 from flask import request, render_template, url_for, session
 from app_module import db
+<<<<<<< HEAD
 from app_module.db import insert_address, insert_customer, insert_vehicle, insert_vehicle_class, insert_office_location, insert_corporation, insert_individual, insert_corporate, get_vehicle_by_id, get_vehicles, get_password, get_user_type, \
     get_all_locations, get_all_vehclasses, get_user_id, get_coupon, get_vehicle_class, get_all_corporations, get_all_vehicles, get_all_customers, delete_corporation, delete_customer, delete_off_loc, delete_veh_class, delete_vehicle
 from app_module.models import User, Vehicle, Address, Customer, Rental, VehicleClass, Location, Corporation, Individual, Corporate
+=======
+from app_module.db import insert_address, insert_customer, insert_vehicle, insert_vehicle_class, insert_office_location, \
+    get_vehicle_by_id, get_vehicles, get_password, get_user_type, \
+    get_all_locations, get_all_vehclasses, get_user_id, get_coupon, get_vehicle_class, insert_invoice, insert_payment, \
+    insert_rental
+from app_module.models import User, Vehicle, Address, Customer, Rental, VehicleClass, Location, Invoice, Payment
+>>>>>>> af79ac2185c7fa1ae3da28359385dd963ac66ce4
 from datetime import date
 
 vehicle_images = {
@@ -23,8 +35,6 @@ vehicle_images = {
 }
 
 app_secret = b'YdEadWnAevr_kqP6eTyGOQVjhAw3R0O1RnYLKFde9mU='
-admin_username = 'admin'
-admin_password = '1234'
 
 @app.route('/login', methods=['GET', 'POST'])
 @app.route('/', methods=['GET', 'POST'])
@@ -36,11 +46,20 @@ def login():
     db_password = decrypt(get_password(username))
     if db_password is not None:
         if password == db_password:
+<<<<<<< HEAD
             user = User(username, "user")
             login_user(user)
             if username == 'admin':
                 return "admin login"
             else:
+=======
+            if get_user_type(username) == "I":
+                user = User(username, "user")
+            else:
+                user = User(username, "corporate")
+            login_user(user)
+            if user.user_type == "user" or user.user_type == "corporate":
+>>>>>>> af79ac2185c7fa1ae3da28359385dd963ac66ce4
                 return redirect(url_for('index'))
     return 'Bad login'
 
@@ -52,6 +71,7 @@ def admin_login():
     username = request.form['username']
     password = request.form['password']
     db_password = decrypt(get_password(username))
+<<<<<<< HEAD
     if db_password is not None:
         if password == db_password:
             user = User(username, "admin")
@@ -60,6 +80,14 @@ def admin_login():
         else:
             return "wrong password"
     return "username doesn't exist"
+=======
+    if password == db_password:
+        user = User(username, "admin")
+        login_user(user)
+        return redirect(url_for('manage'))
+    else:
+        return "wrong password or username doesn't exist"
+>>>>>>> af79ac2185c7fa1ae3da28359385dd963ac66ce4
 
 
 @app.route('/logout')
@@ -231,10 +259,10 @@ def vehicle_page(vehicle_id):
                                 , dropoff_date=dropoff_date, pickup_location=pickup_location
                                 , dropoff_location=dropoff_location, start_odometer=start_odometer
                                 , end_odometer=end_odometer, daily_limit=daily_limit, add_coupon=add_coupon),
-                        code=303)
+                        code=302)
 
 
-@app.route('/vehicles/<string:vehicle_id>/payment', methods=['GET'])
+@app.route('/vehicles/<string:vehicle_id>/payment', methods=['GET', 'POST'])
 @login_required
 def rent_payment(vehicle_id):
     vehicle = get_vehicle_by_id(vehicle_id)
@@ -249,6 +277,7 @@ def rent_payment(vehicle_id):
 
     cust_name = current_user.id
     cust_id = get_user_id(cust_name)
+    coupon = None
     if add_coupon == 'on':
         coupon = get_coupon(cust_id)
 
@@ -256,18 +285,63 @@ def rent_payment(vehicle_id):
                                    start_odometer, end_odometer, daily_limit)
     base_payment, overmiles_payment, total_payment, discount = payment_calculate(vehicle_id
                                                                                  , rental_object_partial, coupon)
-    return render_template("rent_payment.html", vehicle=vehicle, vehicle_images=vehicle_images
-                           , base_payment=base_payment, overmiles_payment=overmiles_payment, discount=discount
-                           , total_payment=total_payment)
+    if request.method == 'GET':
+        return render_template("rent_payment.html", vehicle=vehicle, vehicle_images=vehicle_images
+                               , base_payment=base_payment, overmiles_payment=overmiles_payment, discount=discount
+                               , total_payment=total_payment)
+
+    # creating invoice
+    invoice = Invoice(date.today(), total_payment)
+    inv_id = insert_invoice(invoice)
+
+    # creating payment
+    email_address = request.form.get('email_address')
+    pay_method = request.form.get('pay_method')
+    card_num = request.form.get('card_num')
+
+    payment = Payment(date.today(), pay_method, int(card_num), inv_id, total_payment)
+    insert_payment(payment)
+
+    # create rental
+    user_type = get_user_type(cust_name)
+    rental = Rental(pickup_date, dropoff_date, start_odometer, end_odometer, daily_limit, cust_id, user_type
+                    , vehicle_id, pickup_location, dropoff_location, inv_id, coupon)
+    insert_rental(rental)
+
+    # sending digital invoice
+    content = "Your rental is from {0} - {1}.\n Total payment is {2}".format(pickup_date, dropoff_date, total_payment)
+    msg = MIMEText(content, "plain", "utf-8")
+    msg["Subject"] = Header("Digital invoice of your rental")
+    msg["From"] = Header("WOW Rental")
+    msg["To"] = Header(email_address)
+
+    mailhost = "smtp.gmail.com"
+    usermail = "wowrentalcompany@gmail.com"
+    password = "Welcome@1"
+
+    try:
+        server = smtplib.SMTP(mailhost, 587, timeout=5)
+        server.ehlo()
+        server.starttls()
+        server.ehlo()
+        server.login(usermail, password)
+        server.sendmail(usermail, [email_address],
+                        msg.as_string())
+        server.quit()
+    except Exception as e:
+        print(str(e))
+    return redirect(url_for('rent_invoice', vehicle_id=vehicle.veh_id, total_payment=total_payment
+                            , email_address=email_address), code=302)
 
 
 @app.route('/vehicles/<string:vehicle_id>/invoice', methods=['GET'])
 @login_required
 def rent_invoice(vehicle_id):
-    vehicle_rs = get_vehicle_by_id(vehicle_id)
-    if vehicle_rs is not None:
-        vehicle = Vehicle(vehicle_rs[0][0], vehicle_rs[0][1])
-    return render_template("rent_invoice.html", vehicle=vehicle, vehicle_images=vehicle_images)
+    vehicle = get_vehicle_by_id(vehicle_id)
+    total_payment = request.args.get('total_payment')
+    email_address = request.args.get('email_address')
+    return render_template("rent_invoice.html", vehicle=vehicle, vehicle_images=vehicle_images
+                           , total_payment=total_payment, email_address=email_address)
 
 
 def encrypt(string):
@@ -297,16 +371,16 @@ def load_key():
 def payment_calculate(vehicle_id, rental, coupon):
     veh_class = get_vehicle_class(vehicle_id)
 
-    pickup_date_list = rental.pickup_date.split('-')
-    dropoff_date_list = rental.dropoff_date.split('-')
+    pickup_date_list = rental.ren_pickupdate.split('-')
+    dropoff_date_list = rental.ren_dropoffdate.split('-')
     pickup_date = date(int(pickup_date_list[0]), int(pickup_date_list[1]), int(pickup_date_list[2]))
     dropoff_date = date(int(dropoff_date_list[0]), int(dropoff_date_list[1]), int(dropoff_date_list[2]))
     days_between = (dropoff_date - pickup_date).days
 
     # total payment = base payment + overmiles payment + discount
     base_payment = days_between * int(veh_class.vc_rateperday)
-    total_limit = days_between * int(rental.daily_limit)
-    over_miles = (int(rental.end_odometer) - int(rental.start_odometer)) - total_limit
+    total_limit = days_between * int(rental.ren_dailylimit)
+    over_miles = (int(rental.ren_endodometer) - int(rental.ren_startodometer)) - total_limit
     over_miles = 0 if over_miles < 0 else over_miles
     overmiles_payment = over_miles * int(veh_class.vc_feeovermile)
 
