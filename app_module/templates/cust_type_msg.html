@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WOW Cust_type</title>
+    <link rel="stylesheet" href="../static/index.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+</head>
+<body>
+    <div class="navbar">
+        <a href="/index" style="text-decoration:none"><h1>WOW Rental</h1></a>
+        <a href="/logout" style="text-decoration:none; padding-right: 10px"><h1>Log out</h1></a>
+    </div>
+    <div class="main">
+        <h1>Bad Register</h1>
+        <ol>
+           <li><b>Customer type must only be 'I' or 'C'</b></li>
+           <li><b>Cust_driverlicnum, Cust_insurcompname, Cust_insurpolnum are required for Cust_type 'I'</b></li>
+           <li><b>Employee_id, Corp_id are required for Cust_type 'C'</b></li>
+        </ol>
+        <div class="vehicle_buttons">
+          <a class="button" href="{{ url_for('register') }}"><button>Back</button></a>
+        </div>
+    <div>
+</body>
+</html>

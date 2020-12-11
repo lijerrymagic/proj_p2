@@ -99,6 +99,9 @@ def register():
     employee_id = request.form['emp_id']
     corp_id = request.form.get('corporations')
 
+    if cust_type not in ("I", "C"):
+        return redirect(url_for("cust_type_msg"))
+
     encrypted_password = encrypt(password)
 
     # TODO post save to db
@@ -107,13 +110,22 @@ def register():
     cust_id = insert_customer(
         Customer("I", first_name, last_name, email, phone_num, addr_id, username, encrypted_password))
     if cust_type == "I":
+        if cust_driverlicnum =='' or  cust_insurcompname =='' or cust_insurpolnum =='':
+            return redirect(url_for("cust_type_msg"))
         individual_obj = Individual(cust_id, cust_driverlicnum, cust_insurcompname, cust_insurpolnum, cust_type)
         insert_individual(individual_obj)
     elif cust_type == "C":
+        if employee_id =='' or  corp_id =='':
+            return redirect(url_for("cust_type_msg"))
         corporate_obj = Corporate(cust_id, employee_id, corp_id, cust_type)
         insert_corporate(corporate_obj)
 
     return redirect(url_for("login"), code=303)
+
+
+@app.route('/cust_type_msg', methods=['GET'])
+def cust_type_msg():
+    return render_template("cust_type_msg.html")
 
 
 @app.route('/corp_register', methods=['GET', 'POST'])
