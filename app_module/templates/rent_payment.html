@@ -22,7 +22,11 @@
 				    <h2>Base payment: ${{ base_payment }}</h2>
 				    <h2>Overmiles payment: ${{ overmiles_payment }}</h2>
 				    {% if coupon %}
-    					<h2>Discount rate: {{ coupon.cou_rate }}% </h2>
+    					<h2>Coupon rate: {{ coupon.cou_rate }}%
+					  	{% if coupon.validstart and coupon.validend %}
+							<i>(Valid from {{ coupon.validstart }} to {{ coupon.validend }})</i>
+						{% endif %}
+						</h2>
 					{% endif %}
 				    {% if discount != 0 %}
     					<h2>You saved: ${{ discount }}</h2>

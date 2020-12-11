@@ -59,7 +59,7 @@ class Location:
 
 
 class Coupon:
-    def __init__(self, cou_rate, validstart, validend, cou_id=None):
+    def __init__(self, cou_rate, validstart=None, validend=None, cou_id=None):
         self.cou_rate = cou_rate
         self.validstart = validstart
         self.validend = validend

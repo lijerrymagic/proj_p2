@@ -1,5 +1,6 @@
 import pymysql
 from app_module.models import User, Vehicle, Address, Customer, Location, Coupon, VehicleClass, Corporation, Corporate
+from datetime import datetime
 
 HOSTNAME = 'localhost'
 USERNAME = 'root'
@@ -40,8 +41,8 @@ def insert_customer(customer_obj):
     username, password) values (%s, %s, %s, %s, %s, %s, %s, %s) '''
               , (customer_obj.cust_type, customer_obj.first_name, customer_obj.last_name, customer_obj.cust_email,
                  customer_obj.cust_phonenum, customer_obj.address_id, customer_obj.username, customer_obj.password))
-    rs = run_query('''select * from zlrz_customer where firstname = %s and lastname = %s order by cust_id desc'''
-                   , (customer_obj.first_name, customer_obj.last_name))
+    rs = run_query('''select * from zlrz_customer where firstname = %s and lastname = %s and cust_email = %s and cust_phonenum = %s order by cust_id desc'''
+                   , (customer_obj.first_name, customer_obj.last_name, customer_obj.cust_email, customer_obj.cust_phonenum))
     return rs[0][0]
 
 
@@ -126,8 +127,12 @@ def insert_rental(rental_obj):
 def insert_coupon(coupon_obj):
     run_query('''insert into zlrz_coupons (cou_rate, validstart, validend) values (%s, %s, %s) '''
               , (coupon_obj.cou_rate, coupon_obj.validstart, coupon_obj.validend))
-    rs = run_query('''select * from zlrz_coupons where cou_rate = %s and validstart = %s and validend = %s'''
-                   , (coupon_obj.cou_rate, coupon_obj.validstart, coupon_obj.validend))
+    if coupon_obj.validstart and coupon_obj.validend:
+        rs = run_query('''select * from zlrz_coupons where cou_rate = %s and validstart = %s and validend = %s order by cou_id desc'''
+                       , (coupon_obj.cou_rate, coupon_obj.validstart, coupon_obj.validend))
+    else:
+        rs = run_query('''select * from zlrz_coupons where cou_rate = %s and validstart is null and validend is null order by cou_id desc'''
+                       , (coupon_obj.cou_rate))
     return rs[0][0]
 
 
@@ -162,7 +167,18 @@ def get_coupon(cust_id):
     rs = run_query('''select zlrz_coupons.* from zlrz_cust_coupon join zlrz_coupons 
     on zlrz_cust_coupon.cou_id = zlrz_coupons.cou_id where zlrz_cust_coupon.cust_id = %s'''
                    , (cust_id,))
-    return list(map(lambda t: Coupon(t[1], t[2], t[3], t[0]), rs))[0] if rs is not None else rs
+    res = None
+    maxrate = float('-inf')
+    if rs is not None:
+        coupons = list(map(lambda t: Coupon(t[1], t[2], t[3], t[0]), rs))
+        for cou in coupons:
+            if cou.validstart and cou.validend:
+                if (datetime.now() - cou.validstart).days >= 0 and (cou.validend - datetime.now()).days >= 0:
+                    if cou.cou_rate > maxrate:
+                        maxrate = cou.cou_rate
+                        res = cou
+    return res
+
 
 
 def get_vehicles():
@@ -172,6 +188,7 @@ def get_vehicles():
     """
     rs = run_query('''select * from zlrz_vehicle''')
     return [] if rs is None else rs
+
 
 def get_all_customers():
     rs = run_query('''select * from zlrz_customer''')

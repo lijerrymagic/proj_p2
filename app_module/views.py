@@ -17,7 +17,7 @@ from app_module.db import insert_address, insert_customer, insert_vehicle, inser
 from app_module.models import User, Vehicle, Address, Customer, Rental, VehicleClass, Location, Corporation, Individual, \
     Corporate, Invoice, Payment, Coupon, Cust_coupon
 
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 
 vehicle_images = {
     "BMW_M4": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/2015_BMW_M4_%28F82%29_coupe_%2824220553394%29"
@@ -98,7 +98,6 @@ def register():
     cust_insurpolnum = request.form['cust_insurpolnum']
     employee_id = request.form['emp_id']
     corp_id = request.form.get('corporations')
-
     if cust_type not in ("I", "C"):
         return redirect(url_for("cust_type_msg"))
 
@@ -108,14 +107,14 @@ def register():
     address_obj = Address(state, city, street, zipcode)
     addr_id = insert_address(address_obj)
     cust_id = insert_customer(
-        Customer("I", first_name, last_name, email, phone_num, addr_id, username, encrypted_password))
+        Customer(cust_type, first_name, last_name, email, phone_num, addr_id, username, encrypted_password))
     if cust_type == "I":
         if cust_driverlicnum =='' or  cust_insurcompname =='' or cust_insurpolnum =='':
             return redirect(url_for("cust_type_msg"), code=303)
         individual_obj = Individual(cust_id, cust_driverlicnum, cust_insurcompname, cust_insurpolnum, cust_type)
         insert_individual(individual_obj)
         # auto add coupon
-        coupon_obj = Coupon(5, date.today(), date.today()+timedelta(days=90))
+        coupon_obj = Coupon(5, date.today(), date.today()+ timedelta(days=90))
         cou_id = insert_coupon(coupon_obj)
         cust_coupon_obj = Cust_coupon(cou_id, cust_id, cust_type, cust_type)
         insert_cust_coupon(cust_coupon_obj)
@@ -126,15 +125,12 @@ def register():
         corporate_obj = Corporate(cust_id, employee_id, corp_id, cust_type)
         insert_corporate(corporate_obj)
         # auto add coupon
-        coupon_obj = Coupon(10, date.today(), date.today()+timedelta(days=180))
+        coupon_obj = Coupon(10)
         cou_id = insert_coupon(coupon_obj)
         cust_coupon_obj = Cust_coupon(cou_id, cust_id, cust_type, cust_type)
         insert_cust_coupon(cust_coupon_obj)
 
     return redirect(url_for("login"), code=303)
-
-
-
 
 
 @app.route('/cust_type_msg', methods=['GET'])
