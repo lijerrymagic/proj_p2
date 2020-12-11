@@ -123,6 +123,19 @@ def insert_rental(rental_obj):
                  , rental_obj.inv_id, rental_obj.cou_id))
 
 
+def insert_coupon(coupon_obj):
+    run_query('''insert into zlrz_coupons (cou_rate, validstart, validend) values (%s, %s, %s) '''
+              , (coupon_obj.cou_rate, coupon_obj.validstart, coupon_obj.validend))
+    rs = run_query('''select * from zlrz_coupons where cou_rate = %s and validstart = %s and validend = %s'''
+                   , (coupon_obj.cou_rate, coupon_obj.validstart, coupon_obj.validend))
+    return rs[0][0]
+
+
+def insert_cust_coupon(cust_coupon_obj):
+    run_query('''insert into zlrz_cust_coupon (cou_id, cust_id, cust_type, coupon_type) values (%s, %s, %s, %s) '''
+              , (cust_coupon_obj.cou_id, cust_coupon_obj.cust_id, cust_coupon_obj.cust_type, cust_coupon_obj.coupon_type))
+    return
+
 
 def get_password(username):
     rs = run_query('''select password from zlrz_customer where username = %s''', (username,))

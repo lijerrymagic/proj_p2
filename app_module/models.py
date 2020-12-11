@@ -66,6 +66,14 @@ class Coupon:
         self.cou_id = cou_id
 
 
+class Cust_coupon:
+    def __init__(self, cou_id, cust_id, cust_type, coupon_type):
+        self.cou_id = cou_id
+        self.cust_id = cust_id
+        self.cust_type = cust_type
+        self.coupon_type = coupon_type
+
+
 class VehicleClass:
     def __init__(self, vc_name, vc_rateperday, vc_feeovermile, vc_num=None):
         self.vc_name = vc_name

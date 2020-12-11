@@ -18,17 +18,18 @@
             {% for vehicle in vehicles %}
               <div class="vehicle_card">
                   <div class="vehicle_image">
-                        <img src="{{vehicle_images[vehicle.make + '_' +vehicle.model]}}" width="400" height="260">
+                        <img src="{{vehicle_images[vehicle[0].make + '_' +vehicle[0].model]}}" width="400" height="260">
                   </div>
                   <div class="vehicle_info">
-                      <h1> {{ vehicle.make }} </h1>
-                      <h1> {{ vehicle.model }} </h1>
-                      <h1> {{ vehicle.year }} </h1>
-                      <h2> VIN Num: {{ vehicle.vin_num }} </h2>
-                      <h2> License Num: {{ vehicle.license_num }} </h2>
+                      <h1> {{ vehicle[0].make }} </h1>
+                      <h1> {{ vehicle[0].model }} </h1>
+                      <h1> {{ vehicle[0].year }} </h1>
+                      <h2> Rate: ${{ vehicle[1].vc_rateperday}}/day + Fee: ${{ vehicle[1].vc_feeovermile }}/overmile </h2>
+                      <h2> VIN Num: {{ vehicle[0].vin_num }} </h2>
+                      <h2> License Num: {{ vehicle[0].license_num }} </h2>
                   </div>
                   <div class="vehicle_buttons">
-                      <a class="button" href="{{ url_for('vehicle_page', vehicle_id=vehicle.veh_id) }}"><button>RENT</button></a>
+                      <a class="button" href="{{ url_for('vehicle_page', vehicle_id=vehicle[0].veh_id) }}"><button>RENT</button></a>
                   </div>
               </div>
             {% endfor %}

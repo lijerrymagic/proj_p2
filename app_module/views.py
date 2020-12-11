@@ -13,11 +13,11 @@ from app_module.db import insert_address, insert_customer, insert_vehicle, inser
     insert_corporation, insert_individual, insert_corporate, get_vehicle_by_id, get_vehicles, get_password, get_user_type, \
     get_all_locations, get_all_vehclasses, get_user_id, get_coupon, get_vehicle_class, get_all_corporations, get_all_vehicles, \
     get_all_customers, delete_corporation, delete_customer, delete_off_loc, delete_veh_class, delete_vehicle, insert_invoice, \
-    insert_payment, insert_rental
+    insert_payment, insert_rental, insert_coupon, insert_cust_coupon
 from app_module.models import User, Vehicle, Address, Customer, Rental, VehicleClass, Location, Corporation, Individual, \
-    Corporate, Invoice, Payment
+    Corporate, Invoice, Payment, Coupon, Cust_coupon
 
-from datetime import date
+from datetime import date, timedelta
 
 vehicle_images = {
     "BMW_M4": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/2015_BMW_M4_%28F82%29_coupe_%2824220553394%29"
@@ -111,16 +111,30 @@ def register():
         Customer("I", first_name, last_name, email, phone_num, addr_id, username, encrypted_password))
     if cust_type == "I":
         if cust_driverlicnum =='' or  cust_insurcompname =='' or cust_insurpolnum =='':
-            return redirect(url_for("cust_type_msg"))
+            return redirect(url_for("cust_type_msg"), code=303)
         individual_obj = Individual(cust_id, cust_driverlicnum, cust_insurcompname, cust_insurpolnum, cust_type)
         insert_individual(individual_obj)
+        # auto add coupon
+        coupon_obj = Coupon(5, date.today(), date.today()+timedelta(days=90))
+        cou_id = insert_coupon(coupon_obj)
+        cust_coupon_obj = Cust_coupon(cou_id, cust_id, cust_type, cust_type)
+        insert_cust_coupon(cust_coupon_obj)
+
     elif cust_type == "C":
         if employee_id =='' or  corp_id =='':
-            return redirect(url_for("cust_type_msg"))
+            return redirect(url_for("cust_type_msg"), code=303)
         corporate_obj = Corporate(cust_id, employee_id, corp_id, cust_type)
         insert_corporate(corporate_obj)
+        # auto add coupon
+        coupon_obj = Coupon(10, date.today(), date.today()+timedelta(days=180))
+        cou_id = insert_coupon(coupon_obj)
+        cust_coupon_obj = Cust_coupon(cou_id, cust_id, cust_type, cust_type)
+        insert_cust_coupon(cust_coupon_obj)
 
     return redirect(url_for("login"), code=303)
+
+
+
 
 
 @app.route('/cust_type_msg', methods=['GET'])
@@ -225,7 +239,7 @@ def index():
     vehicles_rs = get_vehicles()
     vehicles = []
     for t in vehicles_rs:
-        vehicles.append(Vehicle(t[1], t[2], t[3], t[4], t[5], t[6], t[7], t[0]))
+        vehicles.append((Vehicle(t[1], t[2], t[3], t[4], t[5], t[6], t[7], t[0]), get_vehicle_class(t[0])))
     return render_template("index.html", vehicles=vehicles, vehicle_images=vehicle_images)
 
 
@@ -268,20 +282,20 @@ def rent_payment(vehicle_id):
     daily_limit = request.args.get('daily_limit')
     add_coupon = request.args.get('add_coupon')
 
+
     cust_name = current_user.id
     cust_id = get_user_id(cust_name)
     coupon = None
     if add_coupon == 'on':
         coupon = get_coupon(cust_id)
 
-    rental_object_partial = Rental(pickup_date, dropoff_date, pickup_location, dropoff_location,
-                                   start_odometer, end_odometer, daily_limit)
+    rental_object_partial = Rental(pickup_date, dropoff_date, start_odometer, end_odometer, daily_limit, ren_pickuplocid=pickup_location, ren_dropoffloc_id=dropoff_location,)
     base_payment, overmiles_payment, total_payment, discount = payment_calculate(vehicle_id
                                                                                  , rental_object_partial, coupon)
     if request.method == 'GET':
         return render_template("rent_payment.html", vehicle=vehicle, vehicle_images=vehicle_images
                                , base_payment=base_payment, overmiles_payment=overmiles_payment, discount=discount
-                               , total_payment=total_payment)
+                               , total_payment=total_payment, coupon = coupon)
 
     # creating invoice
     invoice = Invoice(date.today(), total_payment)
@@ -376,6 +390,7 @@ def payment_calculate(vehicle_id, rental, coupon):
     over_miles = (int(rental.ren_endodometer) - int(rental.ren_startodometer)) - total_limit
     over_miles = 0 if over_miles < 0 else over_miles
     overmiles_payment = over_miles * int(veh_class.vc_feeovermile)
+
 
     total_payment = (base_payment + overmiles_payment)
     discount = 0
