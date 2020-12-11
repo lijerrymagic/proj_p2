@@ -246,6 +246,7 @@ def delete_vehicle(veh_id):
 def delete_customer(cust_id):
     if cust_id == '':
         return
+    rs4 = run_query('''delete from zlrz_cust_coupon where cust_id=%s''', (int(cust_id)))
     rs2 = run_query('''delete from zlrz_corporate where cust_id=%s''', (int(cust_id)))
     rs3 = run_query('''delete from zlrz_individual where cust_id=%s''', (int(cust_id)))
     rs1 = run_query('''delete from zlrz_customer where cust_id=%s''', (int(cust_id)))
