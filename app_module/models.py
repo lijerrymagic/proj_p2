@@ -74,7 +74,6 @@ class VehicleClass:
         self.vc_num = vc_num
 
 
-<<<<<<< HEAD
 class Corporation:
     def __init__(self, corp_name, corp_regnum, corp_id=None):
         self.corp_name = corp_name
@@ -97,7 +96,8 @@ class Corporate:
         self.employee_id = employee_id
         self.corp_id = corp_id
         self.cust_type = cust_type
-=======
+
+
 class Invoice:
     def __init__(self, inv_date, inv_amount, inv_id=None):
         self.inv_date = inv_date
@@ -132,7 +132,7 @@ class Rental:
         self.inv_id = inv_id
         self.cou_id = cou_id
         self.ren_id = ren_id
->>>>>>> af79ac2185c7fa1ae3da28359385dd963ac66ce4
+
 
 
 @login_manager.user_loader

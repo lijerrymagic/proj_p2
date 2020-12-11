@@ -74,7 +74,6 @@ def insert_office_location(location_obj):
     return rs[0][0]
 
 
-<<<<<<< HEAD
 def insert_corporation(corp_obj):
     run_query('''insert into zlrz_corporation (corp_name, corp_regnum) values (%s, %s)'''
               , (corp_obj.corp_name, corp_obj.corp_regnum))
@@ -93,11 +92,12 @@ def insert_corporate(corporate_obj):
 
 def insert_individual(individual_obj):
     run_query('''insert into zlrz_individual (cust_id, cust_driverlicnum, cust_insurcompname, cust_insurpolnum, cust_type) values (%s, %s, %s, %s, %s)'''
-              , (individual_obj.cust_id, individual_obj.cust_driverlicnum, individual_obj.cust_insurcompname, individual_obj.cust_type))
+              , (individual_obj.cust_id, individual_obj.cust_driverlicnum, individual_obj.cust_insurcompname, individual_obj.cust_insurpolnum,individual_obj.cust_type))
     rs = run_query('''select * from zlrz_individual where cust_id = %s and cust_driverlicnum = %s and cust_insurcompname = %s and cust_insurpolnum = %s and cust_type = %s'''
-                   , (individual_obj.cust_id, individual_obj.cust_driverlicnum, individual_obj.cust_insurcompname, individual_obj.cust_type))
+                   , (individual_obj.cust_id, individual_obj.cust_driverlicnum, individual_obj.cust_insurcompname, individual_obj.cust_insurpolnum,individual_obj.cust_type))
     return rs[0][0]
-=======
+
+
 def insert_invoice(invoice_obj):
     run_query('''insert into zlrz_invoice (inv_date, inv_amount) values (%s, %s) '''
               , (invoice_obj.inv_date, invoice_obj.inv_amount))
@@ -122,7 +122,7 @@ def insert_rental(rental_obj):
                  , rental_obj.cust_type, rental_obj.veh_id, rental_obj.ren_pickuplocid, rental_obj.ren_dropoffloc_id
                  , rental_obj.inv_id, rental_obj.cou_id))
 
->>>>>>> af79ac2185c7fa1ae3da28359385dd963ac66ce4
+
 
 def get_password(username):
     rs = run_query('''select password from zlrz_customer where username = %s''', (username,))
@@ -233,9 +233,9 @@ def delete_vehicle(veh_id):
 def delete_customer(cust_id):
     if cust_id == '':
         return
-    rs1 = run_query('''delete from zlrz_customer where cust_id=%s''', (int(cust_id)))
     rs2 = run_query('''delete from zlrz_corporate where cust_id=%s''', (int(cust_id)))
     rs3 = run_query('''delete from zlrz_individual where cust_id=%s''', (int(cust_id)))
+    rs1 = run_query('''delete from zlrz_customer where cust_id=%s''', (int(cust_id)))
     return rs1
 
 

@@ -8,17 +8,15 @@ from werkzeug.utils import redirect
 from app_module import app
 from flask import request, render_template, url_for, session
 from app_module import db
-<<<<<<< HEAD
-from app_module.db import insert_address, insert_customer, insert_vehicle, insert_vehicle_class, insert_office_location, insert_corporation, insert_individual, insert_corporate, get_vehicle_by_id, get_vehicles, get_password, get_user_type, \
-    get_all_locations, get_all_vehclasses, get_user_id, get_coupon, get_vehicle_class, get_all_corporations, get_all_vehicles, get_all_customers, delete_corporation, delete_customer, delete_off_loc, delete_veh_class, delete_vehicle
-from app_module.models import User, Vehicle, Address, Customer, Rental, VehicleClass, Location, Corporation, Individual, Corporate
-=======
+
 from app_module.db import insert_address, insert_customer, insert_vehicle, insert_vehicle_class, insert_office_location, \
-    get_vehicle_by_id, get_vehicles, get_password, get_user_type, \
-    get_all_locations, get_all_vehclasses, get_user_id, get_coupon, get_vehicle_class, insert_invoice, insert_payment, \
-    insert_rental
-from app_module.models import User, Vehicle, Address, Customer, Rental, VehicleClass, Location, Invoice, Payment
->>>>>>> af79ac2185c7fa1ae3da28359385dd963ac66ce4
+    insert_corporation, insert_individual, insert_corporate, get_vehicle_by_id, get_vehicles, get_password, get_user_type, \
+    get_all_locations, get_all_vehclasses, get_user_id, get_coupon, get_vehicle_class, get_all_corporations, get_all_vehicles, \
+    get_all_customers, delete_corporation, delete_customer, delete_off_loc, delete_veh_class, delete_vehicle, insert_invoice, \
+    insert_payment, insert_rental
+from app_module.models import User, Vehicle, Address, Customer, Rental, VehicleClass, Location, Corporation, Individual, \
+    Corporate, Invoice, Payment
+
 from datetime import date
 
 vehicle_images = {
@@ -46,20 +44,11 @@ def login():
     db_password = decrypt(get_password(username))
     if db_password is not None:
         if password == db_password:
-<<<<<<< HEAD
             user = User(username, "user")
             login_user(user)
             if username == 'admin':
                 return "admin login"
             else:
-=======
-            if get_user_type(username) == "I":
-                user = User(username, "user")
-            else:
-                user = User(username, "corporate")
-            login_user(user)
-            if user.user_type == "user" or user.user_type == "corporate":
->>>>>>> af79ac2185c7fa1ae3da28359385dd963ac66ce4
                 return redirect(url_for('index'))
     return 'Bad login'
 
@@ -71,7 +60,6 @@ def admin_login():
     username = request.form['username']
     password = request.form['password']
     db_password = decrypt(get_password(username))
-<<<<<<< HEAD
     if db_password is not None:
         if password == db_password:
             user = User(username, "admin")
@@ -80,14 +68,7 @@ def admin_login():
         else:
             return "wrong password"
     return "username doesn't exist"
-=======
-    if password == db_password:
-        user = User(username, "admin")
-        login_user(user)
-        return redirect(url_for('manage'))
-    else:
-        return "wrong password or username doesn't exist"
->>>>>>> af79ac2185c7fa1ae3da28359385dd963ac66ce4
+
 
 
 @app.route('/logout')
