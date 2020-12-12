@@ -19,7 +19,9 @@
         </label>
         <input type="text" name="corp_regnum" placeholder="Registration Number of Corporation" id="corp_regnum" required>
 
-        <div class="msg">{{ msg }}</div>
+        {% if msg and msg != "" %}
+            <div class="msg"><i class="fas fa-exclamation-triangle"></i>{{ msg }}</div>
+        {% endif %}
         <input type="submit" value="Register">
 
     </form>

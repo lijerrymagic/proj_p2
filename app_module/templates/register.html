@@ -95,7 +95,9 @@
         {% endfor %}
         </select><br><br>
 
-        <div class="msg">{{ msg }}</div>
+        {% if msg and msg != "" %}
+            <div class="msg"><i class="fas fa-exclamation-triangle"></i>{{ msg }}</div>
+        {% endif %}
         <input type="submit" value="Register">
     </form>
 

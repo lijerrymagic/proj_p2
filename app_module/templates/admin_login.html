@@ -16,8 +16,11 @@
         <label for="password">
             <i class="fas fa-lock"></i>
         </label>
-        <input type="password" name="password" placeholder="Password" id="password" required>
-        <div class="msg">{{ msg }}</div>
+        <input type="password" name="password" placeholder="Password" id="password" required><br><br>
+
+        {% if msg and msg != "" %}
+            <div class="msg"><i class="fas fa-exclamation-triangle"></i>{{ msg }}</div>
+        {% endif %}
         <input type="submit" value="Login">
     </form>
 {% endblock %}
