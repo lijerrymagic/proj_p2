@@ -218,6 +218,36 @@ def man_vehicles():
     return redirect(url_for("man_vehicles"), code=303)
 
 
+@app.route('/cust_coupon', methods=['GET', 'POST'])
+@login_required
+def cust_coupon():
+    if request.method == 'GET':
+        customers = get_all_customers()
+        return render_template("cust_coupon.html", customers=customers)
+    cou_rate = request.form['cou_rate']
+    validstart = request.form['validstart']
+    validend = request.form['validend']
+    username = request.form.get('customers')
+    cust_id = get_user_id(username)
+    cust_type = get_user_type(username)
+
+    if cust_type == 'I':
+        if validstart == "" or validend == "":
+            return redirect(url_for("coupon_msg"), code=303)
+        coupon_obj = Coupon(cou_rate, validstart, validend)
+    elif cust_type =='C':
+        coupon_obj = Coupon(cou_rate)
+    cou_id = insert_coupon(coupon_obj)
+    cust_coupon_obj = Cust_coupon(cou_id, cust_id, cust_type, cust_type)
+    insert_cust_coupon(cust_coupon_obj)
+    return redirect(url_for("cust_coupon"), code=303)
+
+
+@app.route('/coupon_msg', methods=['GET'])
+def coupon_msg():
+    return render_template("coupon_msg.html")
+
+
 @app.route('/index')
 @login_required
 def index():

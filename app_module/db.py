@@ -177,6 +177,10 @@ def get_coupon(cust_id):
                     if cou.cou_rate > maxrate:
                         maxrate = cou.cou_rate
                         res = cou
+            if not cou.validstart and not cou.validend:
+                if cou.cou_rate > maxrate:
+                    maxrate = cou.cou_rate
+                    res = cou
     return res
 
 

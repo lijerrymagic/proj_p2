@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WOW Coupon_msg</title>
+    <link rel="stylesheet" href="../static/index.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+</head>
+<body>
+    <div class="navbar">
+        <a href="/index" style="text-decoration:none"><h1>WOW Rental</h1></a>
+        <a href="/logout" style="text-decoration:none; padding-right: 10px"><h1>Log out</h1></a>
+    </div>
+
+    <div class="main" align="center">
+        <h1>Wrong operation</h1>
+        <p1>Validstart and validend are required for individual customer!</p1><br><br>
+        <div class="vehicle_buttons">
+            <a class="button" href="{{ url_for('cust_coupon') }}"><button>Back</button></a>
+        </div>
+    </div>
+</body>
+</html>
