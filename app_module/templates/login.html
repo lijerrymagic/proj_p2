@@ -4,7 +4,8 @@
     <h1>WOW Login</h1>
     <div class="links">
         <a href="{{ url_for('login') }}" class="active">User Login</a>
-        <a href="{{ url_for('register') }}">Register</a>
+        <a href="{{ url_for('register') }}">Register(Indi)</a>
+        <a href="{{ url_for('register') }}">Register(Corp)</a>
     </div>
     <form action="{{ url_for('login') }}" method="post">
         <label for="username">

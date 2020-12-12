@@ -27,6 +27,8 @@
                       <h2> Rate: ${{ vehicle[1].vc_rateperday}}/day + Fee: ${{ vehicle[1].vc_feeovermile }}/overmile </h2>
                       <h2> VIN Num: {{ vehicle[0].vin_num }} </h2>
                       <h2> License Num: {{ vehicle[0].license_num }} </h2>
+                      <h2> Pick up location: {{ vehicle_locations[vehicle[0].veh_id].street }}
+                          , {{ vehicle_locations[vehicle[0].veh_id].city }}, {{ vehicle_locations[vehicle[0].veh_id].state }}</h2>
                   </div>
                   <div class="vehicle_buttons">
                       <a class="button" href="{{ url_for('vehicle_page', vehicle_id=vehicle[0].veh_id) }}"><button>RENT</button></a>

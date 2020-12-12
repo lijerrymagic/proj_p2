@@ -41,18 +41,22 @@ def insert_customer(customer_obj):
     username, password) values (%s, %s, %s, %s, %s, %s, %s, %s) '''
               , (customer_obj.cust_type, customer_obj.first_name, customer_obj.last_name, customer_obj.cust_email,
                  customer_obj.cust_phonenum, customer_obj.address_id, customer_obj.username, customer_obj.password))
-    rs = run_query('''select * from zlrz_customer where firstname = %s and lastname = %s and cust_email = %s and cust_phonenum = %s order by cust_id desc'''
-                   , (customer_obj.first_name, customer_obj.last_name, customer_obj.cust_email, customer_obj.cust_phonenum))
+    rs = run_query(
+        '''select * from zlrz_customer where firstname = %s and lastname = %s and cust_email = %s and cust_phonenum = %s order by cust_id desc'''
+        , (customer_obj.first_name, customer_obj.last_name, customer_obj.cust_email, customer_obj.cust_phonenum))
     return rs[0][0]
 
 
 def insert_vehicle(vehicle_obj):
     run_query('''insert into zlrz_vehicle (veh_make, veh_model, veh_year, veh_vin, veh_license, vc_num, ol_id) values 
     (%s, %s, %s, %s, %s, %s, %s) '''
-              , (vehicle_obj.make, vehicle_obj.model, int(vehicle_obj.year), vehicle_obj.vin_num, vehicle_obj.license_num, vehicle_obj.class_num, vehicle_obj.location_id))
+              , (
+              vehicle_obj.make, vehicle_obj.model, int(vehicle_obj.year), vehicle_obj.vin_num, vehicle_obj.license_num,
+              vehicle_obj.class_num, vehicle_obj.location_id))
     rs = run_query('''select * from zlrz_vehicle where veh_make = %s and veh_model = %s and veh_year = %s and veh_vin 
     = %s and veh_license = %s and vc_num = %s and ol_id = %s '''
-                   , (vehicle_obj.make, vehicle_obj.model, int(vehicle_obj.year), vehicle_obj.vin_num, vehicle_obj.license_num, vehicle_obj.class_num, vehicle_obj.location_id))
+                   , (vehicle_obj.make, vehicle_obj.model, int(vehicle_obj.year), vehicle_obj.vin_num,
+                      vehicle_obj.license_num, vehicle_obj.class_num, vehicle_obj.location_id))
     return rs[0][0]
 
 
@@ -68,10 +72,12 @@ def insert_vehicle_class(class_obj):
 def insert_office_location(location_obj):
     run_query('''insert into zlrz_office_location (ol_phonenum, ol_state, ol_city, ol_street, ol_zipcode) values (%s, 
     %s, %s, %s, %s) '''
-              , (location_obj.phone, location_obj.state, location_obj.city, location_obj.street, int(location_obj.zipcode)))
+              , (location_obj.phone, location_obj.state, location_obj.city, location_obj.street,
+                 int(location_obj.zipcode)))
     rs = run_query('''select * from zlrz_office_location where ol_phonenum = %s and ol_state = %s and ol_city = %s 
     and ol_street=%s and ol_zipcode=%s '''
-                   , (location_obj.phone, location_obj.state, location_obj.city, location_obj.street, int(location_obj.zipcode)))
+                   , (location_obj.phone, location_obj.state, location_obj.city, location_obj.street,
+                      int(location_obj.zipcode)))
     return rs[0][0]
 
 
@@ -86,16 +92,21 @@ def insert_corporation(corp_obj):
 def insert_corporate(corporate_obj):
     run_query('''insert into zlrz_corporate (cust_id, employee_id, corp_id, cust_type) values (%s, %s, %s, %s)'''
               , (corporate_obj.cust_id, corporate_obj.employee_id, corporate_obj.corp_id, corporate_obj.cust_type))
-    rs = run_query('''select * from zlrz_corporate where cust_id = %s and employee_id = %s and corp_id = %s and cust_type = %s'''
-                   , (corporate_obj.cust_id, corporate_obj.employee_id, corporate_obj.corp_id, corporate_obj.cust_type))
+    rs = run_query(
+        '''select * from zlrz_corporate where cust_id = %s and employee_id = %s and corp_id = %s and cust_type = %s'''
+        , (corporate_obj.cust_id, corporate_obj.employee_id, corporate_obj.corp_id, corporate_obj.cust_type))
     return rs[0][0]
 
 
 def insert_individual(individual_obj):
-    run_query('''insert into zlrz_individual (cust_id, cust_driverlicnum, cust_insurcompname, cust_insurpolnum, cust_type) values (%s, %s, %s, %s, %s)'''
-              , (individual_obj.cust_id, individual_obj.cust_driverlicnum, individual_obj.cust_insurcompname, individual_obj.cust_insurpolnum,individual_obj.cust_type))
-    rs = run_query('''select * from zlrz_individual where cust_id = %s and cust_driverlicnum = %s and cust_insurcompname = %s and cust_insurpolnum = %s and cust_type = %s'''
-                   , (individual_obj.cust_id, individual_obj.cust_driverlicnum, individual_obj.cust_insurcompname, individual_obj.cust_insurpolnum,individual_obj.cust_type))
+    run_query(
+        '''insert into zlrz_individual (cust_id, cust_driverlicnum, cust_insurcompname, cust_insurpolnum, cust_type) values (%s, %s, %s, %s, %s)'''
+        , (individual_obj.cust_id, individual_obj.cust_driverlicnum, individual_obj.cust_insurcompname,
+           individual_obj.cust_insurpolnum, individual_obj.cust_type))
+    rs = run_query(
+        '''select * from zlrz_individual where cust_id = %s and cust_driverlicnum = %s and cust_insurcompname = %s and cust_insurpolnum = %s and cust_type = %s'''
+        , (individual_obj.cust_id, individual_obj.cust_driverlicnum, individual_obj.cust_insurcompname,
+           individual_obj.cust_insurpolnum, individual_obj.cust_type))
     return rs[0][0]
 
 
@@ -112,6 +123,11 @@ def insert_payment(payment_obj):
     values (%s, %s , %s , %s , %s) '''
               , (payment_obj.pay_date, payment_obj.pay_method, payment_obj.pay_cardnum, payment_obj.inv_id
                  , payment_obj.pay_amount))
+    rs = run_query('''select * from zlrz_payment where pay_date=%s and pay_method=%s and pay_cardnum=%s and inv_id=%s
+     and pay_amount=%s'''
+              , (payment_obj.pay_date, payment_obj.pay_method, payment_obj.pay_cardnum, payment_obj.inv_id
+                 , payment_obj.pay_amount))
+    return rs[0][0]
 
 
 def insert_rental(rental_obj):
@@ -122,23 +138,35 @@ def insert_rental(rental_obj):
                  , rental_obj.ren_endodometer, rental_obj.ren_dailylimit, rental_obj.cust_id
                  , rental_obj.cust_type, rental_obj.veh_id, rental_obj.ren_pickuplocid, rental_obj.ren_dropoffloc_id
                  , rental_obj.inv_id, rental_obj.cou_id))
+    rs = run_query('''select * from zlrz_rental where ren_pickupdate=%s and ren_dropoffdate=%s and ren_startodometer=%s
+    and ren_endodometer=%s and ren_dailylimit=%s and cust_id=%s and cust_type=%s and veh_id=%s and ren_pickuplocid=%s
+    and ren_dropoffloc_id=%s and inv_id=%s and cou_id=%s'''
+                   , (rental_obj.ren_pickupdate, rental_obj.ren_dropoffdate, rental_obj.ren_startodometer
+                      , rental_obj.ren_endodometer, rental_obj.ren_dailylimit, rental_obj.cust_id
+                      , rental_obj.cust_type, rental_obj.veh_id, rental_obj.ren_pickuplocid,
+                      rental_obj.ren_dropoffloc_id
+                      , rental_obj.inv_id, rental_obj.cou_id))
+    return rs[0][0]
 
 
 def insert_coupon(coupon_obj):
     run_query('''insert into zlrz_coupons (cou_rate, validstart, validend) values (%s, %s, %s) '''
               , (coupon_obj.cou_rate, coupon_obj.validstart, coupon_obj.validend))
     if coupon_obj.validstart and coupon_obj.validend:
-        rs = run_query('''select * from zlrz_coupons where cou_rate = %s and validstart = %s and validend = %s order by cou_id desc'''
-                       , (coupon_obj.cou_rate, coupon_obj.validstart, coupon_obj.validend))
+        rs = run_query(
+            '''select * from zlrz_coupons where cou_rate = %s and validstart = %s and validend = %s order by cou_id desc'''
+            , (coupon_obj.cou_rate, coupon_obj.validstart, coupon_obj.validend))
     else:
-        rs = run_query('''select * from zlrz_coupons where cou_rate = %s and validstart is null and validend is null order by cou_id desc'''
-                       , (coupon_obj.cou_rate))
+        rs = run_query(
+            '''select * from zlrz_coupons where cou_rate = %s and validstart is null and validend is null order by cou_id desc'''
+            , (coupon_obj.cou_rate))
     return rs[0][0]
 
 
 def insert_cust_coupon(cust_coupon_obj):
     run_query('''insert into zlrz_cust_coupon (cou_id, cust_id, cust_type, coupon_type) values (%s, %s, %s, %s) '''
-              , (cust_coupon_obj.cou_id, cust_coupon_obj.cust_id, cust_coupon_obj.cust_type, cust_coupon_obj.coupon_type))
+              ,
+              (cust_coupon_obj.cou_id, cust_coupon_obj.cust_id, cust_coupon_obj.cust_type, cust_coupon_obj.coupon_type))
     return
 
 
@@ -162,7 +190,6 @@ def get_all_corporations():
     return [] if rs is None else list(map(lambda t: Corporation(t[1], t[2], t[0]), rs))
 
 
-
 def get_coupon(cust_id):
     rs = run_query('''select zlrz_coupons.* from zlrz_cust_coupon join zlrz_coupons 
     on zlrz_cust_coupon.cou_id = zlrz_coupons.cou_id where zlrz_cust_coupon.cust_id = %s'''
@@ -182,7 +209,6 @@ def get_coupon(cust_id):
                     maxrate = cou.cou_rate
                     res = cou
     return res
-
 
 
 def get_vehicles():
@@ -221,6 +247,16 @@ def get_all_locations():
     """
     rs = run_query('''select * from zlrz_office_location''')
     return [] if rs is None else list(map(lambda t: Location(t[1], t[2], t[3], t[4], t[5], t[0]), rs))
+
+
+def get_location_by_id(location_id):
+    """
+    Get all location objects
+    :return:
+    """
+    rs = run_query('''select * from zlrz_office_location where ol_id = %s''', (location_id,))
+    return list(map(lambda t: Location(t[1], t[2], t[3], t[4], t[5], t[0]), rs))[0] if rs is not None else None
+
 
 def get_all_vehclasses():
     """

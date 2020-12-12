@@ -26,12 +26,8 @@
 						  <label for="dropoff_date">Pick up Date:</label>
 						  <input type="date" id="dropoff_date" name="dropoff_date" required><br><br>
 
-						  <label for="pickup_location">Pick up location:</label>
-						  <select name="pickup_location" id="pickup_location">
-							{% for location in locations %}
-								<option value= "{{location.location_id}}">{{ location.street }}, {{ location.city }}, {{ location.state }}</option>
-						    {% endfor %}
-						  </select><br><br>
+						  <label >Pick up location:</label>
+						  <h2 style="font-weight: normal">{{ pickp_location.street }}, {{ pickp_location.city }}, {{ pickp_location.state }}</h2>
 
 						  <label for="dropoff_location">Drop off location:</label>
 						  <select name="dropoff_location" id="dropoff_location">

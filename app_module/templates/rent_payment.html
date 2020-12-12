@@ -21,6 +21,7 @@
                   <div class="vehicle_payment">
 				    <h2>Base payment: ${{ base_payment }}</h2>
 				    <h2>Overmiles payment: ${{ overmiles_payment }}</h2>
+				    <h2>Subtotal: ${{ base_payment + overmiles_payment }}</h2>
 				    {% if coupon %}
     					<h2>Coupon rate: {{ coupon.cou_rate }}%
 					  	{% if coupon.validstart and coupon.validend %}

@@ -4,10 +4,10 @@
     <h1>WOW Login</h1>
     <div class="links">
         <a href="{{ url_for('login') }}">User Login</a>
-        <a href="{{ url_for('register') }}" class="active">Register(Indi)</a>
-        <a href="{{ url_for('corp_register') }}">Register(Corp)</a>
+        <a href="{{ url_for('register') }}">Register(Indi)</a>
+        <a href="{{ url_for('corp_register') }}" class="active">Register(Corp)</a>
     </div>
-    <form id="fom1" action="{{ url_for('register') }}" method="post">
+    <form id="fom1" action="{{ url_for('corp_register') }}" method="post">
         <label for="username">
             <i class="fas fa-user"></i>
         </label>
@@ -58,21 +58,20 @@
         </label>
         <input type="text" name="zipcode" placeholder="Zipcode" id="zipcode" required>
 
-
-        <label for="cust_driverlicnum">
+        <label for="emp_id">
             <i class="fas fa-id-card-alt"></i>
         </label>
-        <input type="text" name="cust_driverlicnum" placeholder="Driver License Number" id="cust_driverlicnum">
+        <input type="text" name="emp_id" placeholder="Employee ID" id="emp_id">
 
-        <label for="cust_insurcompname">
+        <label for="corporations">
             <i class="fas fa-building"></i>
         </label>
-        <input type="text" name="cust_insurcompname" placeholder="Insurance Company Name" id="cust_insurcompname">
-
-        <label for="cust_insurpolnum">
-            <i class="fas fa-id-card-alt"></i>
-        </label>
-        <input type="text" name="cust_insurpolnum" placeholder="Insurance Policy Number" id="cust_insurpolnum">
+        <select name="corporations" id="corporations">
+            <option value="" selected></option>
+        {% for corporation in corporations %}
+            <option value= "{{corporation.corp_id}}">{{ corporation.corp_name }}</option>
+        {% endfor %}
+        </select><br><br>
 
         {% if msg and msg != "" %}
             <div class="msg"><i class="fas fa-exclamation-triangle"></i>{{ msg }}</div>

@@ -16,7 +16,7 @@ from app_module.db import insert_address, insert_customer, insert_vehicle, inser
     get_all_vehicles, \
     get_all_customers, delete_corporation, delete_customer, delete_off_loc, delete_veh_class, delete_vehicle, \
     insert_invoice, \
-    insert_payment, insert_rental, insert_coupon, insert_cust_coupon
+    insert_payment, insert_rental, insert_coupon, insert_cust_coupon, get_location_by_id
 from app_module.models import User, Vehicle, Address, Customer, Rental, VehicleClass, Location, Corporation, Individual, \
     Corporate, Invoice, Payment, Coupon, Cust_coupon
 
@@ -74,7 +74,6 @@ def register():
         return render_template("register.html", corporations=corporations)
     first_name = request.form['firstname']
     last_name = request.form['lastname']
-    cust_type = request.form['cust_type']
     email = request.form['email']
     phone_num = request.form['phone']
     username = request.form['username']
@@ -86,58 +85,62 @@ def register():
     cust_driverlicnum = request.form['cust_driverlicnum']
     cust_insurcompname = request.form['cust_insurcompname']
     cust_insurpolnum = request.form['cust_insurpolnum']
-    employee_id = request.form['emp_id']
-    corp_id = request.form.get('corporations')
-    if cust_type not in ("I", "C"):
-        return redirect(url_for("cust_type_msg"))
 
     encrypted_password = encrypt(password)
 
     address_obj = Address(state, city, street, zipcode)
     addr_id = insert_address(address_obj)
+    cust_type = "I"
     cust_id = insert_customer(
         Customer(cust_type, first_name, last_name, email, phone_num, addr_id, username, encrypted_password))
-    if cust_type == "I":
-        if cust_driverlicnum == '' or cust_insurcompname == '' or cust_insurpolnum == '':
-            return redirect(url_for("cust_type_msg"), code=303)
-        individual_obj = Individual(cust_id, cust_driverlicnum, cust_insurcompname, cust_insurpolnum, cust_type)
-        insert_individual(individual_obj)
-        # auto add coupon as gift when user registering
-        coupon_obj = Coupon(5, date.today(), date.today() + timedelta(days=90))
-        cou_id = insert_coupon(coupon_obj)
-        cust_coupon_obj = Cust_coupon(cou_id, cust_id, cust_type, cust_type)
-        insert_cust_coupon(cust_coupon_obj)
 
-    elif cust_type == "C":
-        if employee_id == '' or corp_id == '':
-            return redirect(url_for("cust_type_msg"), code=303)
-        corporate_obj = Corporate(cust_id, employee_id, corp_id, cust_type)
-        insert_corporate(corporate_obj)
-        # auto add coupon as gift when user registering
-        coupon_obj = Coupon(10)
-        cou_id = insert_coupon(coupon_obj)
-        cust_coupon_obj = Cust_coupon(cou_id, cust_id, cust_type, cust_type)
-        insert_cust_coupon(cust_coupon_obj)
+    individual_obj = Individual(cust_id, cust_driverlicnum, cust_insurcompname, cust_insurpolnum, cust_type)
+    insert_individual(individual_obj)
+    # auto add coupon as gift when user registering
+    coupon_obj = Coupon(5, date.today(), date.today() + timedelta(days=90))
+    cou_id = insert_coupon(coupon_obj)
+    cust_coupon_obj = Cust_coupon(cou_id, cust_id, cust_type, cust_type)
+    insert_cust_coupon(cust_coupon_obj)
 
     return redirect(url_for("login"), code=303)
 
 
-@app.route('/cust_type_msg', methods=['GET'])
-def cust_type_msg():
-    return render_template("cust_type_msg.html")
-
-
 @app.route('/corp_register', methods=['GET', 'POST'])
 def corp_register():
+    corporations = get_all_corporations()
     if request.method == 'GET':
-        return render_template("corporation.html")
+        return render_template("register_corp.html", corporations=corporations)
 
-    corp_name = request.form['corp_name']
-    corp_regnum = request.form['corp_regnum']
+    first_name = request.form['firstname']
+    last_name = request.form['lastname']
+    email = request.form['email']
+    phone_num = request.form['phone']
+    username = request.form['username']
+    password = request.form['password']
+    state = request.form['state']
+    city = request.form['city']
+    street = request.form['street']
+    zipcode = request.form['zipcode']
+    employee_id = request.form['emp_id']
+    corp_id = request.form.get('corporations')
 
-    corp_obj = Corporation(corp_name, corp_regnum)
-    corp_id = insert_corporation(corp_obj)
-    return redirect(url_for("corp_register"), code=303)
+    encrypted_password = encrypt(password)
+
+    address_obj = Address(state, city, street, zipcode)
+    addr_id = insert_address(address_obj)
+    cust_type = "C"
+    cust_id = insert_customer(
+    Customer(cust_type, first_name, last_name, email, phone_num, addr_id, username, encrypted_password))
+
+    corporate_obj = Corporate(cust_id, employee_id, corp_id, cust_type)
+    insert_corporate(corporate_obj)
+    # auto add coupon as gift when user registering
+    coupon_obj = Coupon(10)
+    cou_id = insert_coupon(coupon_obj)
+    cust_coupon_obj = Cust_coupon(cou_id, cust_id, cust_type, cust_type)
+    insert_cust_coupon(cust_coupon_obj)
+
+    return redirect(url_for("login"), code=303)
 
 
 @app.route('/manage')
@@ -253,9 +256,12 @@ def coupon_msg():
 def index():
     vehicles_rs = get_vehicles()
     vehicles = []
+    vehicle_locations = {}
     for t in vehicles_rs:
         vehicles.append((Vehicle(t[1], t[2], t[3], t[4], t[5], t[6], t[7], t[0]), get_vehicle_class(t[0])))
-    return render_template("index.html", vehicles=vehicles, vehicle_images=vehicle_images)
+        vehicle_locations[t[0]] = get_location_by_id(t[7])
+    return render_template("index.html", vehicles=vehicles, vehicle_images=vehicle_images
+                           , vehicle_locations=vehicle_locations)
 
 
 @app.route('/vehicles/<string:vehicle_id>', methods=['GET', 'POST'])
@@ -263,14 +269,14 @@ def index():
 def vehicle_page(vehicle_id):
     vehicle = get_vehicle_by_id(vehicle_id)
     if request.method == 'GET':
-        locations = get_all_locations()
+        pickp_location = get_location_by_id(vehicle.location_id)
         locations2 = get_all_locations()
         return render_template("vehicle_page.html", vehicle=vehicle, vehicle_images=vehicle_images,
-                               locations=locations, locations2=locations2)
+                               pickp_location=pickp_location, locations2=locations2)
     else:
         pickup_date = request.form.get('pickup_date')
         dropoff_date = request.form.get('dropoff_date')
-        pickup_location = request.form.get('pickup_location')
+        pickup_location = vehicle.location_id
         dropoff_location = request.form.get('dropoff_location')
         start_odometer = request.form.get('start_odometer')
         end_odometer = request.form.get('end_odometer')
@@ -322,16 +328,47 @@ def rent_payment(vehicle_id):
     card_num = request.form.get('card_num')
 
     payment = Payment(date.today(), pay_method, int(card_num), inv_id, total_payment)
-    insert_payment(payment)
+    payment_id = insert_payment(payment)
 
     # create rental
     user_type = get_user_type(cust_name)
     rental = Rental(pickup_date, dropoff_date, start_odometer, end_odometer, daily_limit, cust_id, user_type
                     , vehicle_id, pickup_location, dropoff_location, inv_id, coupon.cou_id)
-    insert_rental(rental)
+    rental_id = insert_rental(rental)
 
     # sending digital invoice
-    content = "Your rental is from {0} - {1}.\n Total payment is {2}".format(pickup_date, dropoff_date, total_payment)
+    content = """Thank you for your recent rental purchase from WOW Rental Company. Details of this transaction are below:
+
+                Payment ID: {0}
+                Payment Date: {1}
+                
+                Rental Id:  {2}
+                
+                ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+                
+                Rental details
+                
+                Pick up date: {3}
+                Drop off date: {4}
+
+                Vehicle: {5} {6}
+                License Num: {7}
+                Subtotal: ${8}
+                Amount Paid with Coupon: -${9}
+                Total payment: ${10}
+                
+                Payment Method: {11}
+                Email for digital invoice: {12}
+                
+                ‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑‑
+                
+                WOW Rental Company Ltd.
+                123‑4567 Madison Square
+                New York City
+                123-456-7890
+                """.format(payment_id, date.today(), rental_id, pickup_date, dropoff_date, vehicle.make
+                           , vehicle.model, vehicle.license_num, base_payment + overmiles_payment, discount, total_payment, pay_method
+                           , email_address)
     msg = MIMEText(content, "plain", "utf-8")
     msg["Subject"] = Header("Digital invoice of your rental")
     msg["From"] = Header("WOW Rental")
