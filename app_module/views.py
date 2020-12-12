@@ -137,7 +137,7 @@ def corp_register():
 
     corp_obj = Corporation(corp_name, corp_regnum)
     corp_id = insert_corporation(corp_obj)
-    return redirect(url_for("manage"), code=303)
+    return redirect(url_for("corp_register"), code=303)
 
 
 @app.route('/manage')
