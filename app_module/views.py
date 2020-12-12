@@ -52,26 +52,13 @@ def login():
             user = User(username, "user")
             login_user(user)
             return redirect(url_for('index'))
-        else:
-            return render_template("login.html", msg="Wrong user password, please try again")
-    return render_template("login.html", msg="User name not exists")
-
-
-@app.route('/admin_login', methods=['GET', 'POST'])
-def admin_login():
-    if request.method == 'GET':
-        return render_template("admin_login.html")
-    username = request.form['username']
-    password = request.form['password']
-    db_password = decrypt(get_password(username))
-    if db_password is not None:
-        if username == "admin" and password == db_password:
+        elif username == "admin" and password == db_password:
             user = User(username, "admin")
             login_user(user)
             return redirect(url_for('manage'))
         else:
-            return render_template("admin_login.html", msg="Wrong admin password, please try again")
-    return render_template("admin_login.html", msg="Admin user name not exists")
+            return render_template("login.html", msg="Wrong password, please try again")
+    return render_template("login.html", msg="User name not exists")
 
 
 @app.route('/logout')
