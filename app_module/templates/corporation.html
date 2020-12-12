@@ -1,14 +1,20 @@
-{% extends 'login_base.html' %}
-
-{% block form %}
-    <h1>WOW Login</h1>
-    <div class="links">
-        <a href="{{ url_for('login') }}">User Login</a>
-        <a href="{{ url_for('admin_login') }}" >Admin Login</a>
-        <a href="{{ url_for('register') }}">Register</a>
-        <a href="{{ url_for('corp_register') }}" class="active">Corporation Register</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WOW Corporation Register</title>
+    <link rel="stylesheet" href="../static/index.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+</head>
+<body>
+    <div class="navbar">
+        <a href="/index" style="text-decoration:none"><h1>WOW Rental</h1></a>
+        <a href="/logout" style="text-decoration:none; padding-right: 10px"><h1>Log out</h1></a>
     </div>
-    <form action="{{ url_for('corp_register') }}" method="post">
+
+    <div class="login">
+        <h1>Corporation Register</h1>
+        <form id="corp_form" action="{{ url_for('corp_register') }}" method="post">
         <label for="corp_name">
             <i class="fas fa-building"></i>
         </label>
@@ -20,7 +26,13 @@
         <input type="text" name="corp_regnum" placeholder="Registration Number of Corporation" id="corp_regnum" required>
 
         <div class="msg">{{ msg }}</div>
-        <input type="submit" value="Register">
+        </form>
 
-    </form>
-{% endblock %}
+        <div class="vehicle_buttons">
+          <button type="submit" form="corp_form">Add Corporation</button>
+          <a class="button" href="{{ url_for('manage') }}"><button>Back</button></a>
+        </div>
+
+    </div>
+</body>
+</html>
