@@ -4,7 +4,6 @@
     <h1>WOW Login</h1>
     <div class="links">
         <a href="{{ url_for('login') }}" class="active">User Login</a>
-        <a href="{{ url_for('admin_login') }}" >Admin Login</a>
         <a href="{{ url_for('register') }}">Register</a>
     </div>
     <form action="{{ url_for('login') }}" method="post">
@@ -16,7 +15,10 @@
             <i class="fas fa-lock"></i>
         </label>
         <input type="password" name="password" placeholder="Password" id="password" required>
-        <div class="msg">{{ msg }}</div>
+
+        {% if msg and msg != "" %}
+            <div class="msg"><i class="fas fa-exclamation-triangle"></i>{{ msg }}</div>
+        {% endif %}
         <input type="submit" value="Login">
     </form>
 {% endblock %}

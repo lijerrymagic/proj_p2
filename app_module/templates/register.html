@@ -4,7 +4,6 @@
     <h1>WOW Login</h1>
     <div class="links">
         <a href="{{ url_for('login') }}">User Login</a>
-        <a href="{{ url_for('admin_login') }}" >Admin Login</a>
         <a href="{{ url_for('register') }}" class="active">Register</a>
     </div>
     <form id="fom1" action="{{ url_for('register') }}" method="post">
@@ -94,7 +93,9 @@
         {% endfor %}
         </select><br><br>
 
-        <div class="msg">{{ msg }}</div>
+        {% if msg and msg != "" %}
+            <div class="msg"><i class="fas fa-exclamation-triangle"></i>{{ msg }}</div>
+        {% endif %}
         <input type="submit" value="Register">
     </form>
 

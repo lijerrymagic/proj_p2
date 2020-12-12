@@ -10,9 +10,12 @@ from flask import request, render_template, url_for, session
 from app_module import db
 
 from app_module.db import insert_address, insert_customer, insert_vehicle, insert_vehicle_class, insert_office_location, \
-    insert_corporation, insert_individual, insert_corporate, get_vehicle_by_id, get_vehicles, get_password, get_user_type, \
-    get_all_locations, get_all_vehclasses, get_user_id, get_coupon, get_vehicle_class, get_all_corporations, get_all_vehicles, \
-    get_all_customers, delete_corporation, delete_customer, delete_off_loc, delete_veh_class, delete_vehicle, insert_invoice, \
+    insert_corporation, insert_individual, insert_corporate, get_vehicle_by_id, get_vehicles, get_password, \
+    get_user_type, \
+    get_all_locations, get_all_vehclasses, get_user_id, get_coupon, get_vehicle_class, get_all_corporations, \
+    get_all_vehicles, \
+    get_all_customers, delete_corporation, delete_customer, delete_off_loc, delete_veh_class, delete_vehicle, \
+    insert_invoice, \
     insert_payment, insert_rental, insert_coupon, insert_cust_coupon
 from app_module.models import User, Vehicle, Address, Customer, Rental, VehicleClass, Location, Corporation, Individual, \
     Corporate, Invoice, Payment, Coupon, Cust_coupon
@@ -34,6 +37,7 @@ vehicle_images = {
 
 app_secret = b'YdEadWnAevr_kqP6eTyGOQVjhAw3R0O1RnYLKFde9mU='
 
+
 @app.route('/login', methods=['GET', 'POST'])
 @app.route('/', methods=['GET', 'POST'])
 def login():
@@ -41,34 +45,20 @@ def login():
         return render_template("login.html")
     username = request.form['username']
     password = request.form['password']
-    db_password = decrypt(get_password(username))
+    password_blob = get_password(username)
+    db_password = decrypt(password_blob) if password_blob is not None else None
     if db_password is not None:
-        if password == db_password:
+        if username != "admin" and password == db_password:
             user = User(username, "user")
             login_user(user)
-            if username == 'admin':
-                return "admin login"
-            else:
-                return redirect(url_for('index'))
-    return 'Bad login'
-
-
-@app.route('/admin_login', methods=['GET', 'POST'])
-def admin_login():
-    if request.method == 'GET':
-        return render_template("admin_login.html")
-    username = request.form['username']
-    password = request.form['password']
-    db_password = decrypt(get_password(username))
-    if db_password is not None:
-        if password == db_password:
+            return redirect(url_for('index'))
+        elif username == "admin" and password == db_password:
             user = User(username, "admin")
             login_user(user)
             return redirect(url_for('manage'))
         else:
-            return "wrong password"
-    return "username doesn't exist"
-
+            return render_template("login.html", msg="Wrong password, please try again")
+    return render_template("login.html", msg="User name not exists")
 
 
 @app.route('/logout')
@@ -81,7 +71,7 @@ def logout():
 def register():
     if request.method == 'GET':
         corporations = get_all_corporations()
-        return render_template("register.html", corporations = corporations)
+        return render_template("register.html", corporations=corporations)
     first_name = request.form['firstname']
     last_name = request.form['lastname']
     cust_type = request.form['cust_type']
@@ -103,28 +93,27 @@ def register():
 
     encrypted_password = encrypt(password)
 
-    # TODO post save to db
     address_obj = Address(state, city, street, zipcode)
     addr_id = insert_address(address_obj)
     cust_id = insert_customer(
         Customer(cust_type, first_name, last_name, email, phone_num, addr_id, username, encrypted_password))
     if cust_type == "I":
-        if cust_driverlicnum =='' or  cust_insurcompname =='' or cust_insurpolnum =='':
+        if cust_driverlicnum == '' or cust_insurcompname == '' or cust_insurpolnum == '':
             return redirect(url_for("cust_type_msg"), code=303)
         individual_obj = Individual(cust_id, cust_driverlicnum, cust_insurcompname, cust_insurpolnum, cust_type)
         insert_individual(individual_obj)
-        # auto add coupon
-        coupon_obj = Coupon(5, date.today(), date.today()+ timedelta(days=90))
+        # auto add coupon as gift when user registering
+        coupon_obj = Coupon(5, date.today(), date.today() + timedelta(days=90))
         cou_id = insert_coupon(coupon_obj)
         cust_coupon_obj = Cust_coupon(cou_id, cust_id, cust_type, cust_type)
         insert_cust_coupon(cust_coupon_obj)
 
     elif cust_type == "C":
-        if employee_id =='' or  corp_id =='':
+        if employee_id == '' or corp_id == '':
             return redirect(url_for("cust_type_msg"), code=303)
         corporate_obj = Corporate(cust_id, employee_id, corp_id, cust_type)
         insert_corporate(corporate_obj)
-        # auto add coupon
+        # auto add coupon as gift when user registering
         coupon_obj = Coupon(10)
         cou_id = insert_coupon(coupon_obj)
         cust_coupon_obj = Cust_coupon(cou_id, cust_id, cust_type, cust_type)
@@ -162,13 +151,13 @@ def manage():
 def man_delete():
     if request.method == 'GET':
         locations = get_all_locations()
-        classes  = get_all_vehclasses()
+        classes = get_all_vehclasses()
         vehicles = get_all_vehicles()
         customers = get_all_customers()
         corporations = get_all_corporations()
-        return render_template("man_delete.html", classes = classes, locations = locations, vehicles = vehicles,
-                               customers = customers, corporations = corporations)
-    vc_num =  request.form.get('vehicle_class')
+        return render_template("man_delete.html", classes=classes, locations=locations, vehicles=vehicles,
+                               customers=customers, corporations=corporations)
+    vc_num = request.form.get('vehicle_class')
     location_id = request.form.get('location')
     veh_id = request.form.get('vehicle')
     cust_id = request.form.get('customer')
@@ -215,7 +204,7 @@ def man_off_loc():
 def man_vehicles():
     if request.method == 'GET':
         locations = get_all_locations()
-        classes  = get_all_vehclasses()
+        classes = get_all_vehclasses()
         return render_template("man_vehicles.html", classes=classes, locations=locations)
     make = request.form['make']
     model = request.form['model']
@@ -278,20 +267,20 @@ def rent_payment(vehicle_id):
     daily_limit = request.args.get('daily_limit')
     add_coupon = request.args.get('add_coupon')
 
-
     cust_name = current_user.id
     cust_id = get_user_id(cust_name)
     coupon = None
     if add_coupon == 'on':
         coupon = get_coupon(cust_id)
 
-    rental_object_partial = Rental(pickup_date, dropoff_date, start_odometer, end_odometer, daily_limit, ren_pickuplocid=pickup_location, ren_dropoffloc_id=dropoff_location,)
+    rental_object_partial = Rental(pickup_date, dropoff_date, start_odometer, end_odometer, daily_limit,
+                                   ren_pickuplocid=pickup_location, ren_dropoffloc_id=dropoff_location, )
     base_payment, overmiles_payment, total_payment, discount = payment_calculate(vehicle_id
                                                                                  , rental_object_partial, coupon)
     if request.method == 'GET':
         return render_template("rent_payment.html", vehicle=vehicle, vehicle_images=vehicle_images
                                , base_payment=base_payment, overmiles_payment=overmiles_payment, discount=discount
-                               , total_payment=total_payment, coupon = coupon)
+                               , total_payment=total_payment, coupon=coupon)
 
     # creating invoice
     invoice = Invoice(date.today(), total_payment)
@@ -308,7 +297,7 @@ def rent_payment(vehicle_id):
     # create rental
     user_type = get_user_type(cust_name)
     rental = Rental(pickup_date, dropoff_date, start_odometer, end_odometer, daily_limit, cust_id, user_type
-                    , vehicle_id, pickup_location, dropoff_location, inv_id, coupon)
+                    , vehicle_id, pickup_location, dropoff_location, inv_id, coupon.cou_id)
     insert_rental(rental)
 
     # sending digital invoice
@@ -363,8 +352,7 @@ def decrypt(string_encrypted):
     """
     key = load_key()
     f = Fernet(key)
-    decrypted_message = f.decrypt(string_encrypted)
-    return decrypted_message.decode()
+    return f.decrypt(string_encrypted).decode() if string_encrypted is not None else None
 
 
 def load_key():
@@ -386,7 +374,6 @@ def payment_calculate(vehicle_id, rental, coupon):
     over_miles = (int(rental.ren_endodometer) - int(rental.ren_startodometer)) - total_limit
     over_miles = 0 if over_miles < 0 else over_miles
     overmiles_payment = over_miles * int(veh_class.vc_feeovermile)
-
 
     total_payment = (base_payment + overmiles_payment)
     discount = 0
