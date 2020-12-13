@@ -76,7 +76,7 @@ class Cust_coupon:
 
 class VehicleClass:
     def __init__(self, vc_name, vc_rateperday, vc_feeovermile, vc_num=None):
-        self.vc_name = vc_name
+        self.vc_name = vc_name.upper()
         self.vc_rateperday = vc_rateperday
         self.vc_feeovermile = vc_feeovermile
         self.vc_num = vc_num

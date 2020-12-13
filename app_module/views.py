@@ -16,7 +16,8 @@ from app_module.db import insert_address, insert_customer, insert_vehicle, inser
     get_all_vehicles, \
     get_all_customers, delete_corporation, delete_customer, delete_off_loc, delete_veh_class, delete_vehicle, \
     insert_invoice, \
-    insert_payment, insert_rental, insert_coupon, insert_cust_coupon, get_location_by_id
+    insert_payment, insert_rental, insert_coupon, insert_cust_coupon, get_location_by_id, update_vehicle_class, \
+    get_cust_coupon, delete_cust_coupon
 from app_module.models import User, Vehicle, Address, Customer, Rental, VehicleClass, Location, Corporation, Individual, \
     Corporate, Invoice, Payment, Coupon, Cust_coupon
 
@@ -168,20 +169,34 @@ def man_delete():
         classes = get_all_vehclasses()
         vehicles = get_all_vehicles()
         customers = get_all_customers()
+
         corporations = get_all_corporations()
+        cust_coupons = {}
+        for cust in customers:
+            cust_coupons[cust.cust_id]= get_cust_coupon(cust.cust_id)
         return render_template("man_delete.html", classes=classes, locations=locations, vehicles=vehicles,
-                               customers=customers, corporations=corporations)
+                               customers=customers, corporations=corporations, cust_coupons = cust_coupons)
     vc_num = request.form.get('vehicle_class')
     location_id = request.form.get('location')
     veh_id = request.form.get('vehicle')
     cust_id = request.form.get('customer')
     corp_id = request.form.get('corporation')
-    delete_veh_class(vc_num)
-    delete_off_loc(location_id)
+    cou_id = request.form.get('cust_coupon')
+
+
+    vc_msg = delete_veh_class(vc_num)
+    message = ""
+    if vc_msg == 1:
+        message = "deleting vehicle class"
+        return render_template("wrong_msg.html", message = message)
+    loc_msg = delete_off_loc(location_id)
+    if loc_msg == 1:
+        message = "deleting office location"
+        return render_template("wrong_msg.html", message = message)
     delete_vehicle(veh_id)
     delete_customer(cust_id)
     delete_corporation(corp_id)
-
+    delete_cust_coupon(cou_id)
     return redirect(url_for("man_delete"), code=303)
 
 
@@ -194,7 +209,12 @@ def man_veh_class():
     vc_rateperday = request.form['vc_rateperday']
     vc_feeovermile = request.form['vc_feeovermile']
     class_obj = VehicleClass(vc_name, vc_rateperday, vc_feeovermile)
-    vc_num = insert_vehicle_class(class_obj)
+    for vc in get_all_vehclasses():
+        if  vc_name == vc.vc_name:
+            update_vehicle_class(class_obj)
+            break
+    else:
+        vc_num = insert_vehicle_class(class_obj)
     return redirect(url_for("man_veh_class"), code=303)
 
 
@@ -256,11 +276,6 @@ def cust_coupon():
     cust_coupon_obj = Cust_coupon(cou_id, cust_id, cust_type, cust_type)
     insert_cust_coupon(cust_coupon_obj)
     return redirect(url_for("cust_coupon"), code=303)
-
-
-@app.route('/coupon_msg', methods=['GET'])
-def coupon_msg():
-    return render_template("coupon_msg.html")
 
 
 @app.route('/index')

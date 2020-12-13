@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>WOW Coupon_msg</title>
+    <title>WOW Wrong_msg</title>
     <link rel="stylesheet" href="../static/index.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
 </head>
@@ -13,10 +13,10 @@
     </div>
 
     <div class="main" align="center">
-        <h1>Wrong operation</h1>
-        <p1>Validstart and validend are required for individual customer!</p1><br><br>
+        <h1>Wrong operation for {{ message }}</h1>
+        <p1>Cannot delete or update a parent row: a foreign key constraint fails!</p1><br><br>
         <div class="vehicle_buttons">
-            <a class="button" href="{{ url_for('cust_coupon') }}"><button>Back</button></a>
+            <a class="button" href="{{ url_for('man_delete') }}"><button>Back</button></a>
         </div>
     </div>
 </body>

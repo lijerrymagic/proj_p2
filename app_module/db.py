@@ -190,6 +190,12 @@ def get_all_corporations():
     return [] if rs is None else list(map(lambda t: Corporation(t[1], t[2], t[0]), rs))
 
 
+def get_cust_coupon(cust_id):
+    rs = run_query('''select zlrz_coupons.* from zlrz_cust_coupon join zlrz_coupons 
+    on zlrz_cust_coupon.cou_id = zlrz_coupons.cou_id where zlrz_cust_coupon.cust_id = %s''', (cust_id))
+    return [] if rs is None else list(map(lambda t: Coupon(t[1], t[2], t[3], t[0]), rs))
+
+
 def get_coupon(cust_id):
     rs = run_query('''select zlrz_coupons.* from zlrz_cust_coupon join zlrz_coupons 
     on zlrz_cust_coupon.cou_id = zlrz_coupons.cou_id where zlrz_cust_coupon.cust_id = %s'''
@@ -282,14 +288,22 @@ def get_vehicle_class(vehicle_id):
 def delete_veh_class(vc_num):
     if vc_num == '':
         return
-    rs = run_query('''delete from zlrz_vehicle_class where vc_num=%s''', (int(vc_num)))
+    res = run_query('''select * from zlrz_vehicle where vc_num=%s''', (int(vc_num)))
+    if res:
+        return 1
+    else:
+        rs = run_query('''delete from zlrz_vehicle_class where vc_num=%s''', (int(vc_num)))
     return rs
 
 
 def delete_off_loc(location_id):
     if location_id == '':
         return
-    rs = run_query('''delete from zlrz_office_location where ol_id=%s''', (int(location_id)))
+    res = run_query('''select * from zlrz_office_location where ol_id=%s''', (int(location_id)))
+    if res:
+        return 1
+    else:
+        rs = run_query('''delete from zlrz_office_location where ol_id=%s''', (int(location_id)))
     return rs
 
 
@@ -309,9 +323,20 @@ def delete_customer(cust_id):
     rs1 = run_query('''delete from zlrz_customer where cust_id=%s''', (int(cust_id)))
     return rs1
 
+def delete_cust_coupon(cou_id):
+    if cou_id == '':
+        return
+    rs1 = run_query('''delete from zlrz_cust_coupon where cou_id=%s''', (int(cou_id)))
+    rs2 = run_query('''delete from zlrz_coupons where cou_id=%s''', (int(cou_id)))
+    return rs1
+
 
 def delete_corporation(corp_id):
     if corp_id == '':
         return
     rs = run_query('''delete from zlrz_corporation where corp_id=%s''', (int(corp_id)))
+    return rs
+
+def update_vehicle_class(class_obj):
+    rs = run_query('''update zlrz_vehicle_class set vc_rateperday = %s, vc_feeovermile = %s where vc_name = %s''', (int(class_obj.vc_rateperday), int(class_obj.vc_feeovermile), class_obj.vc_name))
     return rs
