@@ -30,7 +30,7 @@
             <select name="vehicle_class" id="vehicle_class">
                 <option value="" selected></option>
             {% for class in classes %}
-                <option value= "{{class.vc_num}}">{{ class.vc_num }}, {{ class.vc_name }}, {{ class.vc_rateperday }}, {{ class.vc_feeovermile }}</option>
+                <option value= "{{class.vc_num}}">{{ class.vc_num }}, {{ class.vc_name }}, ${{ class.vc_rateperday }}, ${{ class.vc_feeovermile }}</option>
             {% endfor %}
             </select><br><br>
 
@@ -61,7 +61,7 @@
                 <option value="" selected></option>
             {% for customer in customers %}
                 {% for cust_coupon in cust_coupons[customer.cust_id] %}
-                    <option value= "{{cust_coupon.cou_id}}">{{ customer.cust_id }}, {{ cust_coupon.cou_id }}, {{ cust_coupon.cou_rate }}, {{ cust_coupon.validstart }}, {{ cust_coupon.validend }}</option>
+                    <option value= "{{cust_coupon.cou_id}}">{{ customer.cust_id }}, {{ cust_coupon.cou_id }}, {{ cust_coupon.cou_rate }}%, {{ cust_coupon.validstart }}, {{ cust_coupon.validend }}</option>
                 {% endfor %}{% endfor %}
             </select><br><br>
 
