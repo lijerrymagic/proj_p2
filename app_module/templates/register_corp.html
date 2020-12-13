@@ -66,8 +66,7 @@
         <label for="corporations">
             <i class="fas fa-building"></i>
         </label>
-        <select name="corporations" id="corporations">
-            <option value="" selected></option>
+        <select name="corporations" id="corporations" class="selection">
         {% for corporation in corporations %}
             <option value= "{{corporation.corp_id}}">{{ corporation.corp_name }}</option>
         {% endfor %}
