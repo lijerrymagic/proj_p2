@@ -334,7 +334,11 @@ def delete_cust_coupon(cou_id):
 def delete_corporation(corp_id):
     if corp_id == '':
         return
-    rs = run_query('''delete from zlrz_corporation where corp_id=%s''', (int(corp_id)))
+    res = run_query('''select * from zlrz_corporation where corp_id=%s''', (int(corp_id)))
+    if res:
+        return 1
+    else:
+        rs = run_query('''delete from zlrz_corporation where corp_id=%s''', (int(corp_id)))
     return rs
 
 def update_vehicle_class(class_obj):

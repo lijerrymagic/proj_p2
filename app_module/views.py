@@ -169,7 +169,6 @@ def man_delete():
         classes = get_all_vehclasses()
         vehicles = get_all_vehicles()
         customers = get_all_customers()
-
         corporations = get_all_corporations()
         cust_coupons = {}
         for cust in customers:
@@ -193,9 +192,13 @@ def man_delete():
     if loc_msg == 1:
         message = "deleting office location"
         return render_template("wrong_msg.html", message = message)
+    corp_msg = delete_corporation(corp_id)
+    if corp_msg == 1:
+        message = "deleting corporation"
+        return render_template("wrong_msg.html", message = message)
     delete_vehicle(veh_id)
     delete_customer(cust_id)
-    delete_corporation(corp_id)
+
     delete_cust_coupon(cou_id)
     return redirect(url_for("man_delete"), code=303)
 
