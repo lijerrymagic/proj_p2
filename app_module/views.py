@@ -104,7 +104,6 @@ def register():
 
     return redirect(url_for("login"), code=303)
 
-
 @app.route('/corp_register', methods=['GET', 'POST'])
 def corp_register():
     corporations = get_all_corporations()
@@ -141,6 +140,18 @@ def corp_register():
     insert_cust_coupon(cust_coupon_obj)
 
     return redirect(url_for("login"), code=303)
+
+
+@app.route('/corporation', methods=['GET', 'POST'])
+@login_required
+def add_corporation():
+    if request.method == 'GET':
+        return render_template("corporation.html")
+    corp_name = request.form['corp_name']
+    corp_regnum = request.form['corp_regnum']
+    corp_obj = Corporation(corp_name, corp_regnum)
+    corp_id = insert_corporation(corp_obj)
+    return redirect(url_for("add_corporation"), code=303)
 
 
 @app.route('/manage')
@@ -236,7 +247,8 @@ def cust_coupon():
 
     if cust_type == 'I':
         if validstart == "" or validend == "":
-            return redirect(url_for("coupon_msg"), code=303)
+            return render_template("cust_coupon.html", customers=get_all_customers(),
+                                   msg="validstart and validend are required for individual customer!")
         coupon_obj = Coupon(cou_rate, validstart, validend)
     elif cust_type =='C':
         coupon_obj = Coupon(cou_rate)
