@@ -42,18 +42,18 @@
             <label for="vehicle_class">
                 <i class="fas fa-car"></i>
             </label>
-            <select name="vehicle_class" id="vehicle_class">
+            <select name="vehicle_class" id="vehicle_class" class="selection">
             {% for class in classes %}
-                <option value= "{{class.vc_num}}">{{ class.vc_name }}, {{ class.vc_rateperday }}, {{ class.vc_feeovermile }}</option>
+                <option value= "{{class.vc_num}}" >{{ class.vc_name }}, {{ class.vc_rateperday }}, {{ class.vc_feeovermile }}</option>
             {% endfor %}
             </select><br><br>
 
             <label for="location">
                 <i class="fas fa-home"></i>
             </label>
-            <select name="location" id="location">
+            <select name="location" id="location" class="selection">
             {% for location in locations %}
-                <option value= "{{location.location_id}}">{{ location.street }}, {{ location.city }}, {{ location.state }}</option>
+                <option value= "{{location.location_id}}">{{ location.street }}</option>
             {% endfor %}
             </select><br><br>
 
